@@ -1,0 +1,52 @@
+"stufe","kennzahl","gruppe","art","groesse","wert","n","f","m"
+1,"Analysegruppe","Gesamt","","Fallzahl",8295,,,
+2,"Adipositas","Gesamt","roh","Praevalenz",41.869862889614375,,,
+2,"Adipositas","Gesamt","roh","Standardfehler",1.1806306544607676,,,
+3,"Adipositas","Gesamt","roh","KI_unten",39.424061375120132,8295,25,1581.8229416219926
+3,"Adipositas","Gesamt","roh","KI_oben",44.345898395270332,8295,25,1581.8229416219926
+3,"Adipositas","Gesamt","roh","KI_unten_svyciprop_beta",39.424061375120132,,,
+3,"Adipositas","Gesamt","roh","KI_oben_svyciprop_beta",44.345898395270332,,,
+4,"Adipositas","Gesamt","adjustiert","Praevalenz",41.870547180198159,,,
+4,"Adipositas","Gesamt","adjustiert","Standardfehler",1.2173555047883051,,,
+2,"Schwere Adipositas","Gesamt","roh","Praevalenz",8.9760918956426323,,,
+2,"Schwere Adipositas","Gesamt","roh","Standardfehler",0.59749260855191044,,,
+3,"Schwere Adipositas","Gesamt","roh","KI_unten",7.7802567289544085,8295,25,2073.2935107432841
+3,"Schwere Adipositas","Gesamt","roh","KI_oben",10.289328895413552,8295,25,2073.2935107432841
+3,"Schwere Adipositas","Gesamt","roh","KI_unten_svyciprop_beta",7.7802567289544085,,,
+3,"Schwere Adipositas","Gesamt","roh","KI_oben_svyciprop_beta",10.289328895413552,,,
+4,"Schwere Adipositas","Gesamt","adjustiert","Praevalenz",9.2383029881892007,,,
+4,"Schwere Adipositas","Gesamt","adjustiert","Standardfehler",0.6339613199279085,,,
+1,"Analysegruppe","Männer","","Fallzahl",4051,,,
+2,"Adipositas","Männer","roh","Praevalenz",41.583711014746825,,,
+2,"Adipositas","Männer","roh","Standardfehler",1.9932265484225147,,,
+3,"Adipositas","Männer","roh","KI_unten",37.443965258995689,4051,25,554.06387129061977
+3,"Adipositas","Männer","roh","KI_oben",45.813684108931241,4051,25,554.06387129061977
+3,"Adipositas","Männer","roh","KI_unten_svyciprop_beta",37.443965258995689,,,
+3,"Adipositas","Männer","roh","KI_oben_svyciprop_beta",45.813684108931241,,,
+4,"Adipositas","Männer","adjustiert","Praevalenz",41.795023451055272,,,
+4,"Adipositas","Männer","adjustiert","Standardfehler",2.0500713553017795,,,
+2,"Schwere Adipositas","Männer","roh","Praevalenz",6.4253335375588447,,,
+2,"Schwere Adipositas","Männer","roh","Standardfehler",0.6790580066855284,,,
+3,"Schwere Adipositas","Männer","roh","KI_unten",5.0948168785224883,4051,25,1181.5610499068455
+3,"Schwere Adipositas","Männer","roh","KI_oben",7.9774716657087357,4051,25,1181.5610499068455
+3,"Schwere Adipositas","Männer","roh","KI_unten_svyciprop_beta",5.0948168785224883,,,
+3,"Schwere Adipositas","Männer","roh","KI_oben_svyciprop_beta",7.9774716657087357,,,
+4,"Schwere Adipositas","Männer","adjustiert","Praevalenz",6.6173115300491911,,,
+4,"Schwere Adipositas","Männer","adjustiert","Standardfehler",0.71789454591114443,,,
+1,"Analysegruppe","Frauen","","Fallzahl",4244,,,
+2,"Adipositas","Frauen","roh","Praevalenz",42.139694158165881,,,
+2,"Adipositas","Frauen","roh","Standardfehler",1.2452956434873053,,,
+3,"Adipositas","Frauen","roh","KI_unten",39.559055116480849,4244,25,1424.7258557353216
+3,"Adipositas","Frauen","roh","KI_oben",44.752812185679971,4244,25,1424.7258557353216
+3,"Adipositas","Frauen","roh","KI_unten_svyciprop_beta",39.559055116480849,,,
+3,"Adipositas","Frauen","roh","KI_oben_svyciprop_beta",44.752812185679979,,,
+4,"Adipositas","Frauen","adjustiert","Praevalenz",41.846690273340961,,,
+4,"Adipositas","Frauen","adjustiert","Standardfehler",1.2475193883253439,,,
+2,"Schwere Adipositas","Frauen","roh","Praevalenz",11.381368337912017,,,
+2,"Schwere Adipositas","Frauen","roh","Standardfehler",0.85247890654629976,,,
+3,"Schwere Adipositas","Frauen","roh","KI_unten",9.6782494404519124,4244,25,1257.6400940337473
+3,"Schwere Adipositas","Frauen","roh","KI_oben",13.267301007825939,4244,25,1257.6400940337473
+3,"Schwere Adipositas","Frauen","roh","KI_unten_svyciprop_beta",9.6782494404519142,,,
+3,"Schwere Adipositas","Frauen","roh","KI_oben_svyciprop_beta",13.267301007825939,,,
+4,"Schwere Adipositas","Frauen","adjustiert","Praevalenz",11.748508666741893,,,
+4,"Schwere Adipositas","Frauen","adjustiert","Standardfehler",0.9150994670499738,,,

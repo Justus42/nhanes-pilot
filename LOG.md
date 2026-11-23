@@ -271,3 +271,91 @@ Die Zahlen stehen in der Ausgabe des Skripts. Nur die Formel der Spezifikation t
 **Urteil: Die Formel der Spezifikation weicht nicht von Series 2 Nr. 175 ab.** Abend 2 wird gerechnet.
 
 **Lücke ohne Folge für Abend 2:** SPEC.md regelt nicht den Fall p = 0 oder 1 (V = 0, n<sub>e</sub> nicht definiert). Series 2 Nr. 175 nimmt dann n. Bei den sechs rohen Prävalenzen von Abend 2 (Zielwerte 6,4 % bis 42,1 %) kann der Fall nicht eintreten. Das Auswertungsskript bricht ab, falls er doch eintritt. Frage 3 in `OFFEN.md`, nicht blockierend.
+
+## 2026-11-24 – Abend 2: Positivkontrolle gerechnet
+
+**Skripte, neu:**
+
+- `A/03_positivkontrolle.R` rechnet die Stufen 1 bis 4 und schreibt `results/A/abend2_werte.csv`. Es enthält keine Zielwerte und keine erwarteten Fallzahlen. Vor dem Lesen prüft es die SHA-256 jeder Rohdatei gegen `results/A/abend1_dateien.csv`.
+- `A/04_zielvergleich.R` liest diese Datei, ergänzt Zielwert, Toleranz, Abweichung und Urteil und schreibt `results/A/abend2_positivkontrolle.csv`. Nur dieses Skript enthält die Zielwerte, abgeschrieben aus SPEC.md Version 2.1. Zielwerte und Toleranzen sind unverändert.
+
+Beide Skripte liefen ohne Fehler und ohne Änderung nach dem ersten Lauf. Ein zweiter Lauf hat beide CSV-Dateien Byte für Byte gleich erzeugt. R 4.3.3, survey 4.2.1.
+
+**Umsetzung der Spezifikation:**
+
+- Designbasis: 14.300 Personen mit `RIDSTATR = 2`, alle mit `WTMECPRP > 0`. P\_BMX per `SEQN` angefügt, keine Person verloren.
+- 24 Strata, 49 Cluster, 2 bis 3 Cluster je Stratum. Kein Stratum mit nur einem Cluster, also kein Eintrag in `OFFEN.md`. Freiheitsgrade des Designs: 25.
+- Masken für Analysegruppe, Geschlecht, Adipositas und schwere Adipositas sind vollständige Ja/Nein-Werte ohne fehlende Angaben. Ein fehlender BMI erfüllt keine Bedingung.
+- Teilgruppen über `subset()` auf dem Designobjekt, keine Zeile vorher gelöscht.
+- Altersadjustiert: `svyby(..., ~altersgruppe, covmat = TRUE)` und `svycontrast` mit 0,396579, 0,371795 und 0,231626. Gegenprobe im Skript: Jede Altersgruppe einzeln als Domäne gerechnet liefert dieselben Anteile und Varianzen wie `svyby`.
+- Vergleich: ungerundet, Abweichung = Wert − Ziel, bestanden bei |Abweichung| ≤ Toleranz. Vor dem Vergleich wird |Abweichung| auf 10 Nachkommastellen gerundet, damit Gleitkommareste (z. B. 0,1000000000000014) nicht zählen. Die Toleranz selbst ist unverändert.
+
+**Ergebnis: Abend 2 bestanden. Alle 29 extern geprüften Zellen liegen innerhalb der Toleranz.** Die größte Abweichung beträgt 0,049 Prozentpunkte (schwere Adipositas, Frauen, adjustiert). Alle Abweichungen sind kleiner als 0,05, also so klein, wie es die Rundung der Zielwerte auf eine Nachkommastelle erwarten lässt. Die Tabelle ist aus `results/A/abend2_positivkontrolle.csv` erzeugt, auf drei Stellen gerundet.
+
+| Stufe | Kennzahl | Gruppe | Art | Größe | Wert | Ziel | Abweichung | Toleranz | Urteil |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 1 | Analysegruppe | Gesamt |  | Fallzahl | 8295 | 8295 | 0,000 | 0,0 | bestanden |
+| 2 | Adipositas | Gesamt | roh | Praevalenz | 41,870 | 41,9 | -0,030 | 0,1 | bestanden |
+| 3 | Adipositas | Gesamt | roh | KI_unten | 39,424 | 39,4 | 0,024 | 0,2 | bestanden |
+| 3 | Adipositas | Gesamt | roh | KI_oben | 44,346 | 44,3 | 0,046 | 0,2 | bestanden |
+| 4 | Adipositas | Gesamt | adjustiert | Praevalenz | 41,871 | 41,9 | -0,029 | 0,1 | bestanden |
+| 4 | Adipositas | Gesamt | adjustiert | Standardfehler | 1,217 | 1,2 | 0,017 | 0,1 | bestanden |
+| 2 | Schwere Adipositas | Gesamt | roh | Praevalenz | 8,976 | 9,0 | -0,024 | 0,1 | bestanden |
+| 3 | Schwere Adipositas | Gesamt | roh | KI_unten | 7,780 | 7,8 | -0,020 | 0,2 | bestanden |
+| 3 | Schwere Adipositas | Gesamt | roh | KI_oben | 10,289 | 10,3 | -0,011 | 0,2 | bestanden |
+| 4 | Schwere Adipositas | Gesamt | adjustiert | Praevalenz | 9,238 | 9,2 | 0,038 | 0,1 | bestanden |
+| 4 | Schwere Adipositas | Gesamt | adjustiert | Standardfehler | 0,634 | 0,6 | 0,034 | 0,1 | bestanden |
+| 1 | Analysegruppe | Männer |  | Fallzahl | 4051 | 4051 | 0,000 | 0,0 | bestanden |
+| 2 | Adipositas | Männer | roh | Praevalenz | 41,584 | 41,6 | -0,016 | 0,1 | bestanden |
+| 3 | Adipositas | Männer | roh | KI_unten | 37,444 | 37,4 | 0,044 | 0,2 | bestanden |
+| 3 | Adipositas | Männer | roh | KI_oben | 45,814 | 45,8 | 0,014 | 0,2 | bestanden |
+| 4 | Adipositas | Männer | adjustiert | Praevalenz | 41,795 | 41,8 | -0,005 | 0,1 | bestanden |
+| 2 | Schwere Adipositas | Männer | roh | Praevalenz | 6,425 | 6,4 | 0,025 | 0,1 | bestanden |
+| 3 | Schwere Adipositas | Männer | roh | KI_unten | 5,095 | 5,1 | -0,005 | 0,2 | bestanden |
+| 3 | Schwere Adipositas | Männer | roh | KI_oben | 7,977 | 8,0 | -0,023 | 0,2 | bestanden |
+| 4 | Schwere Adipositas | Männer | adjustiert | Praevalenz | 6,617 | 6,6 | 0,017 | 0,1 | bestanden |
+| 1 | Analysegruppe | Frauen |  | Fallzahl | 4244 | 4244 | 0,000 | 0,0 | bestanden |
+| 2 | Adipositas | Frauen | roh | Praevalenz | 42,140 | 42,1 | 0,040 | 0,1 | bestanden |
+| 3 | Adipositas | Frauen | roh | KI_unten | 39,559 | 39,6 | -0,041 | 0,2 | bestanden |
+| 3 | Adipositas | Frauen | roh | KI_oben | 44,753 | 44,8 | -0,047 | 0,2 | bestanden |
+| 4 | Adipositas | Frauen | adjustiert | Praevalenz | 41,847 | 41,8 | 0,047 | 0,1 | bestanden |
+| 2 | Schwere Adipositas | Frauen | roh | Praevalenz | 11,381 | 11,4 | -0,019 | 0,1 | bestanden |
+| 3 | Schwere Adipositas | Frauen | roh | KI_unten | 9,678 | 9,7 | -0,022 | 0,2 | bestanden |
+| 3 | Schwere Adipositas | Frauen | roh | KI_oben | 13,267 | 13,3 | -0,033 | 0,2 | bestanden |
+| 4 | Schwere Adipositas | Frauen | adjustiert | Praevalenz | 11,749 | 11,7 | 0,049 | 0,1 | bestanden |
+
+**Standardfehler ohne externes Ziel** (Urteil `extern nicht geprüft`, maßgeblich ist später der Vergleich mit B), in Prozentpunkten:
+
+| Kennzahl | Gruppe | Art | Standardfehler |
+| --- | --- | --- | --- |
+| Adipositas | Gesamt | roh | 1,181 |
+| Schwere Adipositas | Gesamt | roh | 0,597 |
+| Adipositas | Männer | roh | 1,993 |
+| Adipositas | Männer | adjustiert | 2,050 |
+| Schwere Adipositas | Männer | roh | 0,679 |
+| Schwere Adipositas | Männer | adjustiert | 0,718 |
+| Adipositas | Frauen | roh | 1,245 |
+| Adipositas | Frauen | adjustiert | 1,248 |
+| Schwere Adipositas | Frauen | roh | 0,852 |
+| Schwere Adipositas | Frauen | adjustiert | 0,915 |
+
+Beobachtung ohne Folge: Die rohen Standardfehler der Gesamtgruppe (1,181 und 0,597) lägen ebenfalls innerhalb der Toleranz zu 1,2 und 0,6. Die Zuordnung zur adjustierten Schätzung aus Version 2.1 entscheidet also nicht über das Ergebnis.
+
+**Konfidenzintervalle, Angaben zur Formel:**
+
+| Kennzahl | Gruppe | n | f | m |
+| --- | --- | --- | --- | --- |
+| Adipositas | Gesamt | 8295 | 25 | 1581,8 |
+| Schwere Adipositas | Gesamt | 8295 | 25 | 2073,3 |
+| Adipositas | Männer | 4051 | 25 | 554,1 |
+| Schwere Adipositas | Männer | 4051 | 25 | 1181,6 |
+| Adipositas | Frauen | 4244 | 25 | 1424,7 |
+| Schwere Adipositas | Frauen | 4244 | 25 | 1257,6 |
+
+In allen sechs Fällen ist m kleiner als n, die Kappung greift nicht. f = 25 in jeder Teilgruppe: Alle 49 Cluster und 24 Strata enthalten Personen jeder Teilgruppe.
+
+**`svyciprop(method = "beta")`:** zusätzlich ausgegeben (Zeilen `KI_unten_svyciprop_beta` und `KI_oben_svyciprop_beta`, Urteil `extern nicht geprüft`). Größte Differenz zur Formel der Spezifikation: 7,1 · 10⁻¹⁵ Prozentpunkte, also Rechenrauschen. Laut Quelltext von survey 4.2.1 rechnet `svyciprop` mit n<sub>e</sub> · (t(nrow(design) − 1)/t(degf(design)))² ohne Kappung bei n. Für das Teilgruppen-Design ist `nrow` gleich n (geprüft für die Gesamtgruppe: 8.295) und `degf` gleich 25 = f. Weil die Kappung hier nicht greift, ist das dieselbe Rechnung. Unter offenem Punkt 8 der Spezifikation ist damit beantwortet, ob `svyciprop` dasselbe liefert: hier ja.
+
+**Nicht gerechnet:** altersadjustierte Konfidenzintervalle. Laut SPEC.md sind sie kein Kriterium, und SPEC.md legt dafür keine Formel fest.
+
+**Offen:** Frage 3 in `OFFEN.md` (Randfall p = 0 oder 1), ohne Einfluss auf Abend 2.
