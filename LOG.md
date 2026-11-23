@@ -212,3 +212,62 @@ Die Tabelle ist aus `results/A/abend1_dateien.csv` übernommen, die das Skript g
 | `P_RXQ_RX_2026-11-23.htm` | `61fd01fba7680136125d63d4fdf86aa08f12b47057a68709ac34a8a51087f0e6` |
 
 **Vergleich mit der Quellenprüfung:** Die gesicherte P\_DEMO-Seite hat dieselbe Prüfsumme wie die am 23.11.2026 gelesene Live-Seite (`6ac8f9b3…1f918b86`, Abschnitt „Zusatzaufgabe vor Abend 2“, Punkt 3). Die Seite ist also Byte für Byte dieselbe. Die dort zitierten Stellen zu Definition 1 und 7 gelten unverändert für die gesicherte Fassung; eine erneute Prüfung der Zitate ist nicht nötig.
+
+## 2026-11-24 – Nachtrag zum Eintrag „Spezifikation Version 2.1“
+
+Der Eintrag zu Version 2.1 sagt, es seien noch keine Daten geladen gewesen. Genauer: Laut Eintrag vom 23.11. war P_DEMO.xpt schon per curl zum Erreichbarkeitstest abgerufen. Gerechnet war nichts.
+
+## 2026-11-24 – Abend 2, vor dem Rechnen: Prüflauf von `A/01_download.R` und Prüfung der KI-Formel
+
+### Prüflauf `A/01_download.R`
+
+Gestartet am 23.11.2026, 23:40 UTC, auf dem neuen Branch `abend-2` (von `main`, Stand `2c8c406`). Alle vier Dateien wurden frisch geladen. Alle vier SHA-256-Prüfsummen stimmen mit `results/A/abend1_dateien.csv` überein, alle vier Zeilenzahlen mit SPEC.md. Kein Abbruch. Am Skript ist nichts geändert.
+
+### Formel des Konfidenzintervalls gegen NCHS Series 2 Nr. 175
+
+**Quelle:** Parker JD, Talih M, Malec DJ, et al. National Center for Health Statistics data presentation standards for proportions. Vital Health Stat 2(175). 2017. <https://www.cdc.gov/nchs/data/series/sr_02/sr02_175.pdf>, abgerufen am 23.11.2026, SHA-256 `47a0d06b8f79ceb6de2725f1b94eb2320f7f41d64214790395b4bd035bd7b683`. Text mit `pdftotext` gelesen. Die Formeln stehen im PDF als Bild. Sie sind deshalb von den gerenderten Seiten abgeschrieben und hier als Formel wiedergegeben.
+
+**Wörtliche Stellen:**
+
+Titelseite: „This report was revised on November 1, 2018, where on page 4, RSE(Var) was misattributed as RSE(SE). This revision had no effect on the related standard. Table II (page 9) was updated on April 8, 2021, to fix a computing error affecting the confidence interval calculations.“
+
+Seite 2–3, effektive Stichprobengröße: „For an estimate from a complex survey, the effective sample size, n<sub>e</sub>, is defined as the sample size, n, divided by the design effect (7). One approach used to calculate n<sub>e</sub> for estimated proportions from a complex sample survey is:“ — Formel (Bild): n<sub>e</sub> = p̂(1 − p̂) / var̂(p̂).
+
+Seite 3, Kappung: „For complex sample surveys, due to sampling design and variability, there may be cases where the effective sample size is greater than the sample size. When the effective sample size is greater than the sample size, the sample size should be used to determine whether the minimum sample size criterion is met, and it should also be used for CIs and other computations that include the effective sample size.“
+
+Seite 3, null Ereignisse: „If the number of numerator events is 0 or equal to the denominator (the complement of 0 events), the estimated proportion will be 0 or 1, respectively. As a result, the estimated variance of the proportion will be 0, and the effective sample size will be undefined. In these cases, the sample size should be used to determine whether the minimum sample size criterion is met, and it should also be used for CIs and other computations that include the effective sample size.“
+
+Seite 3, Methode: „The Clopper-Pearson CI (2) [adapted for complex surveys by Korn and Graubard (3) when applicable] should be used to determine whether or not the CI of a proportion meets the presentation criteria.“ Und: „For complex sample surveys, the calculation of the Clopper-Pearson CI using the approach of Korn and Graubard incorporates information from the survey design, including the effective sample size and, when appropriate, the degrees of freedom.“
+
+Seite 4: „For complex sample surveys, default calculations from survey software may not be appropriate or feasible for all situations, including age-adjusted estimates, estimates based on multiple imputation, estimates for subgroups represented in only a subset of primary sampling units (PSUs) (e.g., some racial and ethnic groups and region-specific estimates), and when calculating annual or survey cycle estimates using a multiyear or multicycle data file. In these instances, the relevant information should be extracted and the CIs directly calculated.“
+
+Seite 4, Freiheitsgrade: „As one rule of thumb, the degrees of freedom can be calculated as the number of PSUs minus the number of strata. This calculation is used in most NCHS surveys and implemented in survey software, although specific calculations can vary across packages. However, default calculations of degrees of freedom from survey software may not be appropriate for subgroups represented in only a subset of PSUs (e.g., some racial and ethnic groups and region-specific estimates) and when calculating annual or survey cycle estimates using a multiyear or multicycle data file. In these instances, the relevant information should be extracted and the degrees of freedom directly calculated to assess estimate precision.“
+
+Seite 9, Fußnoten zu Tabelle II: „Sample size divided by the design effect. It is calculated in this table using this formula: n<sub>e</sub> = p̂(1 − p̂)/var̂(p̂).“ — „Lower and upper confidence bounds were computed using the Korn-Graubard method.“ — „Effective sample size is greater than sample size. Sample size used for CI calculations.“
+
+Literatur, Seite 6: „2. Clopper CJ, Pearson ES. The use of confidence or fiducial limits illustrated in the case of the binomial. Biometrika 26(4):404–13. 1934.“ und „3. Korn EL, Graubard BI. Confidence intervals for proportions with small expected number of positive counts estimated from survey data. Surv Methodol 24(2):193–201. 1998.“
+
+**Abgleich Punkt für Punkt:**
+
+| SPEC.md | Series 2 Nr. 175 | Urteil |
+| --- | --- | --- |
+| p(1 − p) / V | n<sub>e</sub> = p̂(1 − p̂)/var̂(p̂), Seite 3 und Fußnote Tabelle II | gleich |
+| min(n, …) | „When the effective sample size is greater than the sample size, the sample size should be used …“ | gleich im Ergebnis, siehe Rechenprobe |
+| Faktor (t(0,975; n − 1) / t(0,975; f))² | im Text nicht ausgeschrieben; nur „including the effective sample size and, when appropriate, the degrees of freedom“ mit Verweis auf Korn und Graubard (1998) | im Text nicht belegbar, durch die Rechenprobe bestätigt |
+| f = Cluster minus Strata der Teilgruppe | „number of PSUs minus the number of strata“; für Teilgruppen „directly calculated“ | gleich |
+| Beta-Quantile mit x und m − x + 1 bzw. x + 1 und m − x | im Text nicht ausgeschrieben; „Clopper-Pearson … adapted … by Korn and Graubard“. Das ist die übliche Beta-Form der Clopper-Pearson-Grenzen. | im Text nicht belegbar, durch die Rechenprobe bestätigt |
+| Fall p = 0 oder 1 | Series 2 Nr. 175: dann n statt n<sub>e</sub> | in SPEC.md nicht geregelt, siehe unten |
+
+**Rechenprobe an den Beispielen der Standards:** Skript `A/02_ki_formel_pruefung.R`, neu, Ausgabe `results/A/abend2_ki_formel_pruefung.csv`. Es liest keine NHANES-Rohdaten, sondern rechnet die 16 Zeilen der Anhangtabellen I (Seite 8) und II (Seite 9) aus den dort veröffentlichten n, n<sub>e</sub>, Prozentwerten und Freiheitsgraden nach. Drei Lesarten:
+
+| Lesart | größte Abweichung | auf 0,1 gleich | gleich mit Eingaben innerhalb ihrer Rundung (± 0,05) |
+| --- | --- | --- | --- |
+| SPEC.md: m = min(n, n<sub>e</sub> · Faktor) | 0,085 Prozentpunkte | 10 von 16 | 16 von 16 |
+| erst kappen, dann Faktor: m = min(n, n<sub>e</sub>) · Faktor | 2,326 Prozentpunkte | 6 von 16 | 8 von 16 |
+| ohne Faktor: m = min(n, n<sub>e</sub>) | 1,053 Prozentpunkte | 3 von 16 | 7 von 16 |
+
+Die Zahlen stehen in der Ausgabe des Skripts. Nur die Formel der Spezifikation trifft alle veröffentlichten Grenzen. Die beiden anderen Lesarten verfehlen sie um bis zu 2,3 Prozentpunkte. Damit sind auch die zwei Teile belegt, die der Text nicht ausschreibt: der Freiheitsgrad-Faktor und die Kappung erst nach dem Faktor. Ein Widerspruch im Text der Standards fällt dabei auf: Bei Women, Non-Hispanic Asian (n = 82, n<sub>e</sub> = 108,4, f = 7) sagt die Fußnote „Sample size used for CI calculations“, die veröffentlichten Grenzen 15,8–36,2 ergeben sich aber mit m = n<sub>e</sub> · Faktor = 76,75, also nicht mit n = 82. Mit n wären es 16,1–35,8. Die Zahlen der Tabelle folgen der SPEC-Formel.
+
+**Urteil: Die Formel der Spezifikation weicht nicht von Series 2 Nr. 175 ab.** Abend 2 wird gerechnet.
+
+**Lücke ohne Folge für Abend 2:** SPEC.md regelt nicht den Fall p = 0 oder 1 (V = 0, n<sub>e</sub> nicht definiert). Series 2 Nr. 175 nimmt dann n. Bei den sechs rohen Prävalenzen von Abend 2 (Zielwerte 6,4 % bis 42,1 %) kann der Fall nicht eintreten. Das Auswertungsskript bricht ab, falls er doch eintritt. Frage 3 in `OFFEN.md`, nicht blockierend.
