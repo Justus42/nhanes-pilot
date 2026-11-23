@@ -34,4 +34,4 @@ Jede Frage mit Datum, Anlass und Beleg. Entscheidung durch Justus; Auswerter A �
 
 **Frage:** Soll SPEC.md als Klarstellung ergänzen: „Ist p = 0 oder p = 1, gilt m = n“? Nicht blockierend für Abend 2.
 
-**Status:** offen.
+**Status:** beantwortet am 24.11.2026 durch Justus: keine Änderung an SPEC.md. Der Fall kann im Pilot nicht eintreten, das Skript bricht ab. Die Regel wird im Protokoll der Hauptanalyse festgelegt.

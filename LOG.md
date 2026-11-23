@@ -359,3 +359,29 @@ In allen sechs Fällen ist m kleiner als n, die Kappung greift nicht. f = 25 in 
 **Nicht gerechnet:** altersadjustierte Konfidenzintervalle. Laut SPEC.md sind sie kein Kriterium, und SPEC.md legt dafür keine Formel fest.
 
 **Offen:** Frage 3 in `OFFEN.md` (Randfall p = 0 oder 1), ohne Einfluss auf Abend 2.
+
+## 2026-11-24 – Nachtrag zum Eintrag „Abend 2: Positivkontrolle gerechnet“
+
+### Änderungen an `A/03_positivkontrolle.R` nach dem ersten Lauf
+
+Der Eintrag sagt, beide Skripte liefen „ohne Änderung nach dem ersten Lauf“. Für `A/04_zielvergleich.R` stimmt das. Für `A/03_positivkontrolle.R` stimmt es nicht. Nach dem ersten Lauf von A/03 habe ich drei Dinge geändert:
+
+1. Die Zeile `sub_alter <- subset(des, basis[[gruppen[[g]]]])` gestrichen. Sie baute dasselbe Teilgruppen-Design wie das schon vorhandene Objekt `sub` ein zweites Mal.
+2. In `svyby(...)` deshalb `sub_alter` durch `sub` ersetzt.
+3. Am Ende fünf Zeilen ergänzt, die die größte Differenz zwischen SPEC-Formel und `svyciprop(method = "beta")` auf die Konsole schreiben. Sie schreiben nichts in eine Datei.
+
+**Reihenfolge:** erster Lauf von A/03, dann die drei Änderungen, dann zweiter Lauf von A/03, erst danach der erste Lauf von A/04. A/04 hat also nie die Ausgabe der ersten Fassung von A/03 gelesen. Committet ist nur die geänderte Fassung (Commit `c0b4a40`).
+
+**Wirkung auf `results/A/abend2_werte.csv`: keine.** Die Datei des ersten Laufs ist beim zweiten Lauf überschrieben worden und nicht erhalten. Geprüft habe ich deshalb so: Die erste Fassung wurde durch Rückbau genau dieser drei Änderungen wiederhergestellt (`diff` gegen die committete Fassung zeigt nur sie) und in einer getrennten Kopie des Arbeitsverzeichnisses außerhalb des Repos gegen dieselben Rohdaten ausgeführt, einmal mit und einmal ohne `LANG=C.UTF-8`, wie beim ersten Lauf. Beide Male ist die erzeugte Datei Byte für Byte gleich der committeten `abend2_werte.csv` (SHA-256 `1e2473729aca654823c5872ddc14b3d9408eea53afc56e66821c00ef0b170755`). Einschränkung: Verglichen ist eine Rekonstruktion der ersten Fassung, nicht die ursprüngliche Datei.
+
+Der Satz „Ein zweiter Lauf hat beide CSV-Dateien Byte für Byte gleich erzeugt“ im Eintrag meint einen weiteren Lauf der schon geänderten Fassung von A/03 und von A/04. Er belegt nichts über die erste Fassung.
+
+### Abgeschriebene Eingabe der Zeile Men, Non-Hispanic black
+
+**Wo der Fehler stand:** nicht in `A/02_ki_formel_pruefung.R`, sondern in einem vorläufigen Prüfskript im Scratchpad der Sitzung, das ich vor A/02 geschrieben und nicht committet habe. A/02 entstand erst danach und enthielt von Anfang an den richtigen Wert.
+
+**Zuerst stand da:** n = 195, n<sub>e</sub> = 242,2, Prozentwert **42,1**, f = 12, Grenzen 28,3–42,1. **Jetzt steht da** (in A/02, Zeile `Men_NH_black`): n = 195, n<sub>e</sub> = 242,2, Prozentwert **34,9**, f = 12, Grenzen 28,3–42,1. Falsch war nur der Prozentwert. Ich hatte die obere Grenze 42,1 in die Spalte „Percent estimate“ übernommen.
+
+**Woran ich es bemerkt habe:** Im ersten Lauf des vorläufigen Skripts traf die SPEC-Formel 12 der 13 damals eingegebenen Zeilen auf höchstens 0,08 Prozentpunkte. Diese Zeile lag dagegen 7,26 Prozentpunkte daneben, die beiden anderen Lesarten 7,26 und 8,06. Dabei fiel auf, dass der eingegebene Prozentwert genau der veröffentlichten oberen Grenze glich. Ich habe dann die gerenderte Seite 9 der Quelle erneut angesehen. Dort lautet die Zeile „Non-Hispanic black … 195 242.2 34.9 3.06 8.8 28.3 42.1 13.8 39.5 12“. Am 24.11.2026 noch einmal im Text des PDF (`pdftotext -layout`) nachgesehen: dieselbe Zeile, Prozentwert 34.9. Anlass für das Nachsehen war also die Abweichung im eigenen Ergebnis. Grundlage der Korrektur ist allein die Quelle.
+
+**Weitere Änderung an A/02 nach dessen erstem Lauf:** Ich habe die Prüfung ergänzt, ob die Abweichungen durch die Rundung der Eingaben erklärbar sind. Dazu kamen die Funktion `erklaerbar` und die Spalte `durch_rundung_erklaerbar` in `results/A/abend2_ki_formel_pruefung.csv` hinzu. Die übrigen Werte blieben gleich. Die Konsolenausgabe beider Läufe nennt dieselben größten Abweichungen (0,085, 2,326 und 1,053 Prozentpunkte). Committet ist der zweite Lauf (Commit `65048fa`).
