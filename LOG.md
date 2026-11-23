@@ -31,6 +31,20 @@ Jede Änderung an der Spezifikation oder an einem Skript steht hier mit Datum un
 | 17 | Entscheidungsregel nennt die sieben Zeilen ausdrücklich. Fall „Pilot nicht bestanden“ ergänzt. |
 | 18 | Die Zahl 30 ist als reine Machbarkeitsschwelle gekennzeichnet. |
 
+**Zweites Review** durch Gemini 4 Neon auf dem Stand von Version 2, abgelegt unter `review/gemini/spec-v2-neon.md`. Neon meldete 3 Fehler und 2 Unklarheiten. Alle fünf sind übernommen. Claude hat die vorgeschlagenen Erwartungswerte nachgerechnet, sie stimmen.
+
+| Befund | Änderung |
+| --- | --- |
+| N1 | Rechentests: Toleranz 0,01 ergänzt. Zwei neue Fälle prüfen den geschlechtsabhängigen Exponenten, ein neuer Fall die De-Indexierung. |
+| N2 | Datei je Person genau festgelegt: alle 15.560 `SEQN`, Spalten, leere Werte außerhalb der Analysegruppe. Startauftrag für B ergänzt. |
+| N3 | Kodierung von `RIAGENDR` als Definition 7 aufgenommen (1 männlich, 2 weiblich, laut CDC-Dokumentation zu P_DEMO). |
+| N4 | Kreatinin: Kein Auswerter rechnet von sich aus um. Verlangt die CDC eine Umrechnung, kommt die Formel erst in die Spezifikation. |
+| N5 | Prüfliste Abend 3: B muss nur die Stufen 1, 2 und 4 treffen. |
+
+Drei der fünf Befunde (N1, N2, N5) betreffen Text, der erst mit Version 2 entstanden ist.
+
+**Neuer Abschnitt „Änderungen an dieser Spezifikation“** auf Vorschlag von Claude: Er trennt einen festen Kern (Toleranzen, Abbruchkriterium, Entscheidungsregel, Zielwerte) von Klarstellungen, die auch nach Beginn erlaubt sind, wenn sie belegt und protokolliert werden.
+
 **Weitere Änderungen ohne Bezug zum Review:**
 
 - Das Wort „lokal“ ist gestrichen. Die Arbeitsumgebung (Cloud-Sitzung oder PC) ist offen und wird vor Abend 1 hier eingetragen.

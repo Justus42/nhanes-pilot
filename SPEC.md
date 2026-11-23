@@ -2,7 +2,7 @@
 
 Version 2 vom 23.11.2026 · Justus Jeserigk
 
-Version 2 übernimmt die 18 Befunde des Reviews durch GPT 6.2 Astra (`review/openrouter/spec-v1-astra.md`). Die Änderungen stehen mit Begründung in `LOG.md`. Zielwerte, Toleranzen und die Schwelle der Entscheidungsregel sind unverändert.
+Version 2 übernimmt die 18 Befunde des Reviews durch GPT 6.2 Astra (`review/openrouter/spec-v1-astra.md`) und die 5 Befunde des Reviews durch Gemini 4 Neon (`review/gemini/spec-v2-neon.md`). Die Änderungen stehen mit Begründung in `LOG.md`. Zielwerte, Toleranzen und die Schwelle der Entscheidungsregel sind unverändert.
 
 ## Zweck und Abbruchkriterium
 
@@ -33,7 +33,7 @@ Zwei Auswerter rechnen dieselbe Spezifikation getrennt nach. Auswerter A ist Cla
 
 ## Gemeinsame Definitionen
 
-Diese sechs Festlegungen gelten an allen Abenden und für beide Auswerter.
+Diese sieben Festlegungen gelten an allen Abenden und für beide Auswerter.
 
 1. **Schwangerschaft.** Ausgeschlossen wird nur ein dokumentierter Status `RIDEXPRG = 1`. Fehlende Angabe und Code 3 bleiben eingeschlossen. In R heißt das `is.na(RIDEXPRG) | RIDEXPRG != 1`. Die Variable ist laut CDC nur für Frauen von 20 bis 44 Jahren belegt. Die Gruppe heißt deshalb „ohne dokumentierte Schwangerschaft“.
 2. **Fehlende Werte.** Jede Bedingung wird als vollständige Ja/Nein-Maske gebildet. Ein fehlender Wert erfüllt keine Bedingung. Einzige Ausnahme ist die Schwangerschaftsregel.
@@ -41,6 +41,7 @@ Diese sechs Festlegungen gelten an allen Abenden und für beide Auswerter.
 4. **Designbasis.** Für alle gewichteten Schätzungen bilden die untersuchten Personen aus P\_DEMO (`RIDSTATR = 2`) mit `WTMECPRP > 0` das Design. Andere Dateien werden je Person angefügt, ohne Personen zu verlieren.
 5. **Vergleiche.** Verglichen werden ungerundete Werte in Prozentpunkten. Die CSV-Dateien enthalten die volle Rechengenauigkeit. „Bestanden“ heißt: Abweichung kleiner oder gleich der Toleranz.
 6. **Aussagekraft.** Stimmen A und B überein, ist ein Programmierfehler unwahrscheinlich. Fehler in dieser Spezifikation deckt der Vergleich nicht auf. Dafür gibt es die Zielwerte des Reports und die Rechentests unter Abend 4.
+7. **Geschlecht.** In P\_DEMO bedeutet `RIAGENDR = 1` männlich und `RIAGENDR = 2` weiblich.
 
 ## Abend 1 – Daten laden
 
@@ -208,21 +209,25 @@ Zusätzlich gibt es je eine Zeile `APIXABAN`, `RIVAROXABAN`, `DABIGATRAN` und `E
 - CKD-EPI 2021, de-indexiert (ml/min): indexierter Wert · Körperoberfläche / 1,73.
 - Cockcroft-Gault (ml/min): (140 − Alter) · Gewicht / (72 · Kreatinin), bei Frauen mal 0,85. Verwendet wird das tatsächliche Körpergewicht. Die Formel schätzt die Kreatinin-Clearance und wird nicht auf die Körperoberfläche bezogen.
 
-**Rechentests vor dem Zählen.** Beide Auswerter prüfen ihre Funktionen an diesen Fällen und brechen bei Abweichung ab:
+**Rechentests vor dem Zählen.** Beide Auswerter prüfen ihre Funktionen an diesen Fällen. Sie brechen ab, wenn ein Wert um mehr als 0,01 abweicht, bei der Körperoberfläche um mehr als 0,0001 m².
 
 | Fall | Erwartet |
 | --- | --- |
-| Mann, 60 Jahre, 72 kg, Kreatinin 1,0: Cockcroft-Gault | 80,0 ml/min |
-| Frau, 60 Jahre, 72 kg, Kreatinin 1,0: Cockcroft-Gault | 68,0 ml/min |
+| Mann, 60 Jahre, 72 kg, Kreatinin 1,0: Cockcroft-Gault | 80,00 ml/min |
+| Frau, 60 Jahre, 72 kg, Kreatinin 1,0: Cockcroft-Gault | 68,00 ml/min |
 | Mann, 60 Jahre, Kreatinin 0,9: CKD-EPI indexiert | 97,78 |
 | Frau, 60 Jahre, Kreatinin 0,7: CKD-EPI indexiert | 98,95 |
 | Mann, 60 Jahre, Kreatinin 1,8: CKD-EPI indexiert | 42,56 |
+| Mann, 60 Jahre, Kreatinin 0,45: CKD-EPI indexiert | 120,54 |
+| Frau, 60 Jahre, Kreatinin 0,35: CKD-EPI indexiert | 116,94 |
 | 72 kg, 175 cm: Körperoberfläche | 1,8704 m² |
-| Körperoberfläche genau 1,73 m² | indexierter und de-indexierter Wert sind gleich |
+| Mann, 60 Jahre, 72 kg, 175 cm, Kreatinin 1,8: CKD-EPI de-indexiert | 46,01 ml/min |
+
+Die Fälle mit Kreatinin 0,45 und 0,35 prüfen den geschlechtsabhängigen Exponenten. Der letzte Fall erkennt einen vertauschten Faktor bei der De-Indexierung.
 
 **Kategorien:** unter 30, 30 bis unter 45, 45 bis unter 60, ab 60. Zugeordnet wird der ungerundete Wert. Die Grenzen stehen beim indexierten Wert für ml/min/1,73 m² und bei den beiden anderen für ml/min. „Diskordant“ heißt verschiedene Kategorie, nicht nachgewiesene Fehldosierung.
 
-**Vor dem Rechnen:** A liest die „Analytic Notes“ zu P\_BIOPRO und hält in `LOG.md` wörtlich fest, ob `LBXSCR` in der kombinierten Datei bereits zwischen den Geräten angeglichen ist. Die Doku nennt eine Umrechnungsgleichung. Ohne klare Anweisung der CDC wird nichts umgerechnet.
+**Vor dem Rechnen:** A liest die „Analytic Notes“ zu P\_BIOPRO und hält in `LOG.md` wörtlich fest, ob die CDC für `LBXSCR` innerhalb des Zyklus 2017–März 2020 eine Umrechnung zwischen den Geräten vorschreibt. Verlangt die CDC eine Umrechnung, hält A an. Die genaue Formel kommt dann in diese Spezifikation, bevor B beginnt. Andernfalls verwenden beide `LBXSCR` unverändert. Kein Auswerter rechnet von sich aus um.
 
 **Ausgabe:** eine Zeile je Zeilenname der Tabelle oben, je DOAK-Substanz und für `GESAMT`.
 
@@ -237,7 +242,14 @@ Zusätzlich gibt es je eine Zeile `APIXABAN`, `RIVAROXABAN`, `DABIGATRAN` und `E
 | `n_diskordant_cg_deindex` | Kategorie verschieden zwischen Cockcroft-Gault und CKD-EPI de-indexiert |
 | `n_alter_80` | davon mit gedeckeltem Alter (`RIDAGEYR = 80`) |
 
-**Vergleich Person für Person.** Gleiche Zellenzahlen können aus verschiedenen Personen entstehen. Deshalb schreibt jeder Auswerter zusätzlich eine Datei mit einer Zeile je `SEQN`: Analysegruppe ja oder nein, Treffer je Zeilenname, die drei Kategorien. Diese Dateien liegen in `data/work/` und nicht im Git. `vergleich.py` schreibt nur die Zahl der Abweichungen je Merkmal nach `results/vergleich_abend4.csv`.
+**Vergleich Person für Person.** Gleiche Zellenzahlen können aus verschiedenen Personen entstehen. Deshalb schreibt jeder Auswerter zusätzlich `data/work/abend4_personen_A.csv` beziehungsweise `data/work/abend4_personen_B.csv`. Diese Dateien liegen nicht im Git.
+
+- Genau eine Zeile für jede der 15.560 `SEQN` aus P\_DEMO, sortiert nach `SEQN`.
+- Spalte `analysegruppe`: 1 oder 0.
+- Elf Trefferspalten, benannt wie die Zeilennamen: die sieben der Tabelle oben und die vier einzelnen DOAK. Wert 1 oder 0 für Personen der Analysegruppe, leer für alle anderen. Eine Spalte `GESAMT` gibt es nicht.
+- Drei Kategoriespalten `kat_ckdepi`, `kat_deindex` und `kat_cg` mit den Werten `u30`, `30_45`, `45_60` oder `ab60`. Leer für Personen außerhalb der Analysegruppe.
+
+`vergleich.py` prüft, dass beide Dateien dieselben 15.560 `SEQN` enthalten, und zählt die Abweichungen je Spalte. Ein leerer Wert gegen einen gefüllten zählt als Abweichung. Nach `results/vergleich_abend4.csv` kommt nur die Zahl der Abweichungen je Spalte.
 
 **Fertig ist Abend 4, wenn** `results/A/abend4_fallzahlen.csv` und `results/B/abend4_fallzahlen.csv` in jeder Zelle exakt übereinstimmen und der Vergleich Person für Person null Abweichungen zeigt.
 
@@ -255,7 +267,7 @@ Bestanden ist der Pilot, wenn alle vier Punkte erfüllt sind:
 
 - [ ] Abend 1: vier Dateien geladen, Zeilenzahlen stimmen
 - [ ] Abend 2: A trifft jede extern geprüfte Zelle innerhalb der Toleranz
-- [ ] Abend 3: B trifft jede extern geprüfte Zelle und liegt innerhalb der Toleranz zu A
+- [ ] Abend 3: B trifft jede extern geprüfte Zelle der Stufen 1, 2 und 4 und liegt in jeder gemeinsamen Zelle innerhalb der Toleranz zu A
 - [ ] Abend 4: Rechentests bestanden, Fallzahlen von A und B identisch, null Abweichungen je Person
 
 Nach der Entscheidung und vor jeder Hauptanalyse entsteht ein einseitiges Protokoll, das öffentlich registriert wird.
@@ -276,6 +288,24 @@ Nach der Entscheidung und vor jeder Hauptanalyse entsteht ein einseitiges Protok
 | `LOG.md` | Änderungen mit Grund und Datum, zitierte Quellen |
 | `OFFEN.md` | offene Fragen an die Spezifikation |
 
+## Änderungen an dieser Spezifikation
+
+Die Spezifikation darf nach Beginn des Pilots noch korrigiert werden. Vier Dinge sind davon ausgenommen.
+
+**Fester Kern, ab Beginn von Abend 1 unveränderlich:**
+
+- die Toleranzen,
+- das Abbruchkriterium,
+- die Entscheidungsregel mit den sieben Zeilen und der Schwelle 30,
+- die Zielwerte der Positivkontrolle. Sie dürfen nur berichtigt werden, wenn sie falsch aus dem Report abgelesen wurden, und nur anhand des Reports.
+
+**Alles andere sind Klarstellungen.** Dafür gilt:
+
+1. Der Anlass ist eine Unklarheit, ein Widerspruch oder ein Beleg aus der CDC-Dokumentation. Die eigenen Ergebnisse sind nie ein Grund.
+2. Die Änderung steht mit Datum, Anlass und Beleg in `LOG.md` und wird vor dem Weiterrechnen committet.
+3. Betrifft sie einen schon gerechneten Abend, rechnen beide Auswerter diesen Abend neu. Die alten Ergebnisse bleiben in der Git-Historie sichtbar.
+4. Definitionen von Abend 4 werden nicht mehr geändert, sobald ein Auswerter die Fallzahlen gesehen hat. Davon ausgenommen sind nachweisliche Programmier- oder Lesefehler.
+
 ## Startaufträge zum Kopieren
 
 Drei Aufträge reichen für den Pilot. Die Stellen in spitzen Klammern passt du an.
@@ -290,7 +320,7 @@ Heute ist Abend <1 | 2 | 4>. Bearbeite nur diesen Abschnitt.
 
 Regeln:
 - Arbeite in R mit dem Paket survey. Fehlt R oder ein Paket, sag mir vor der Installation, was du installierst.
-- Halte dich an die acht Regeln und die sechs gemeinsamen Definitionen der Spezifikation.
+- Halte dich an die acht Regeln und die sieben gemeinsamen Definitionen der Spezifikation.
   Öffne die Ordner B/ und results/B/ nicht.
 - Ist die Spezifikation unklar oder widerspricht sie der CDC-Dokumentation: anhalten, Frage in OFFEN.md schreiben, mich fragen.
 - Ändere keine Toleranzen und keine Zielwerte.
@@ -311,9 +341,10 @@ für <die Stufen 1, 2 und 4 der Positivkontrolle | die Fallzahlen von Abend 4>.
 
 Vorgaben:
 - Nur pandas, numpy und scipy. Keine Survey-Bibliothek. Die Varianz programmierst du nach der Beschreibung unter "Abend 3".
-- Halte dich an die sechs gemeinsamen Definitionen der Spezifikation.
+- Halte dich an die sieben gemeinsamen Definitionen der Spezifikation.
 - Eingabe: die .xpt-Dateien in data/raw/ (pandas.read_sas). Textspalten können als Bytes ankommen und müssen dekodiert werden.
 - Ausgabe: die CSV laut Spezifikation in results/B/, mit voller Rechengenauigkeit.
+  An Abend 4 zusätzlich data/work/abend4_personen_B.csv, wie unter "Vergleich Person für Person" beschrieben.
 - Schreib keine Zielwerte in das Skript. Der Vergleich läuft getrennt.
 - Du kannst das Skript nicht selbst gegen die Daten laufen lassen. Es soll bei unerwarteten Zeilenzahlen
   oder fehlenden Spalten mit klarer Meldung abbrechen.
