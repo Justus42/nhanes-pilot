@@ -175,3 +175,40 @@ Beide Belege hat Auswerter A gelesen. Claude hat sie als Prüfer unabhängig in 
 **Nicht geändert:** Zielwerte, Toleranzen, Abbruchkriterium und Entscheidungsregel. Die Standardfehler 1,2 und 0,6 waren schon in Version 2 Zielwerte. Neu ist nur, an welcher Stufe sie geprüft werden.
 
 **Folge für Auswerter B:** B rechnet Stufe 4 ohnehin und wird damit auch gegen die zwei Standardfehler geprüft.
+
+## 2026-11-24 – Abend 1: Lauf von `A/01_download.R`
+
+**Zeitpunkt:** 23.11.2026, 23:28 UTC (24.11.2026, 00:28 MEZ). Das Skript nimmt das Abrufdatum aus der Systemuhr der Cloud-Sitzung, die UTC zeigt. Deshalb tragen `results/A/abend1_dateien.csv` und die Dateien in `docs/cdc/` das Datum 2026-11-23.
+
+**Arbeitsumgebung:** R und Pakete kommen aus dem Setup-Skript der Umgebung. Von Auswerter A ist nichts installiert worden.
+
+| Komponente | Version |
+| --- | --- |
+| R | 4.3.3 (2024-02-29) |
+| survey | 4.2.1 |
+| foreign | 0.8.86 |
+| digest | 0.6.34 |
+
+**Änderungen am Skript:** keine. `A/01_download.R` lief im ersten Versuch ohne Fehler durch.
+
+**Ergebnis: Abend 1 bestanden.** Alle vier Dateien sind ladbar, alle Zeilenzahlen stimmen mit SPEC.md überein, keine benötigte Variable fehlt. Damit ist auch das Download-Muster der Spezifikation (offener Punkt 3) für alle vier Dateien getestet.
+
+| Datei | Bytes | Zeilen | CDC | Spalten | SHA-256 |
+| --- | --- | --- | --- | --- | --- |
+| P_DEMO | 3.614.720 | 15.560 | 15.560 | 29 | `2e46c6c26bf77cd8989f64011ace12cbf42c0f3e03414eb59acc5328c8f87913` |
+| P_BMX | 2.520.640 | 14.300 | 14.300 | 22 | `7038d0da3169420a4a3cbaec09ac586a701b38e1c7b925431b60e13ac24fed66` |
+| P_BIOPRO | 3.420.640 | 10.409 | 10.409 | 41 | `f242cb9f9da5787f77d81ffb02822350e01cea4adf072d23bc96eb008182010c` |
+| P_RXQ_RX | 16.154.000 | 32.962 | 32.962 | 13 | `0ee30345ccfee5ce0ff55e51fca4dec7389d3a8e985c59485d13400e9ec2ee2e` |
+
+Die Tabelle ist aus `results/A/abend1_dateien.csv` übernommen, die das Skript geschrieben hat. Die Rohdaten in `data/raw/` stehen laut SPEC.md nicht im Git; ihre Prüfsummen stehen in der CSV und in `data/raw/CHECKSUMS.txt`.
+
+**Gesicherte Dokumentation** in `docs/cdc/`, SHA-256 mit `sha256sum`:
+
+| Datei | SHA-256 |
+| --- | --- |
+| `P_DEMO_2026-11-23.htm` | `6ac8f9b394615b8b53e1de3bc089c51bd8f1004c01efb746e303476c1f918b86` |
+| `P_BMX_2026-11-23.htm` | `4f3736812ce18aec46d2264791d17a5990d5354bf7835dadbefff978809aba78` |
+| `P_BIOPRO_2026-11-23.htm` | `ec7c2a15c1a114f907cc61f003b4c1218e625c4cbce2eadfa1e974d3bf4e38b5` |
+| `P_RXQ_RX_2026-11-23.htm` | `61fd01fba7680136125d63d4fdf86aa08f12b47057a68709ac34a8a51087f0e6` |
+
+**Vergleich mit der Quellenprüfung:** Die gesicherte P\_DEMO-Seite hat dieselbe Prüfsumme wie die am 23.11.2026 gelesene Live-Seite (`6ac8f9b3…1f918b86`, Abschnitt „Zusatzaufgabe vor Abend 2“, Punkt 3). Die Seite ist also Byte für Byte dieselbe. Die dort zitierten Stellen zu Definition 1 und 7 gelten unverändert für die gesicherte Fassung; eine erneute Prüfung der Zitate ist nicht nötig.

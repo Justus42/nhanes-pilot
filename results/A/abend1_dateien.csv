@@ -1,0 +1,5 @@
+"datei","url","bytes","sha256","zeilen","zeilen_cdc","zeilen_ok","spalten","variablen_fehlend","abgerufen","r_version"
+"P_DEMO","https://wwwn.cdc.gov/Nchs/Data/Nhanes/Public/2017/DataFiles/P_DEMO.xpt",3614720,"2e46c6c26bf77cd8989f64011ace12cbf42c0f3e03414eb59acc5328c8f87913",15560,15560,TRUE,29,"","2026-11-23","4.3.3"
+"P_BMX","https://wwwn.cdc.gov/Nchs/Data/Nhanes/Public/2017/DataFiles/P_BMX.xpt",2520640,"7038d0da3169420a4a3cbaec09ac586a701b38e1c7b925431b60e13ac24fed66",14300,14300,TRUE,22,"","2026-11-23","4.3.3"
+"P_BIOPRO","https://wwwn.cdc.gov/Nchs/Data/Nhanes/Public/2017/DataFiles/P_BIOPRO.xpt",3420640,"f242cb9f9da5787f77d81ffb02822350e01cea4adf072d23bc96eb008182010c",10409,10409,TRUE,41,"","2026-11-23","4.3.3"
+"P_RXQ_RX","https://wwwn.cdc.gov/Nchs/Data/Nhanes/Public/2017/DataFiles/P_RXQ_RX.xpt",16154000,"0ee30345ccfee5ce0ff55e51fca4dec7389d3a8e985c59485d13400e9ec2ee2e",32962,32962,TRUE,13,"","2026-11-23","4.3.3"
