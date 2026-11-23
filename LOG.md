@@ -53,3 +53,10 @@ Drei der fünf Befunde (N1, N2, N5) betreffen Text, der erst mit Version 2 entst
 - `.gitignore` schließt zusätzlich `data/work/` aus.
 
 **Bewertung der Befunde durch Claude:** Befund 2 behauptet, die R-Funktion setze die NCHS-Regel nicht genau um. Das ist nicht geprüft. Die Änderung ist davon unabhängig richtig, weil die Formel jetzt ausgeschrieben ist.
+
+## 2026-11-23 – Entscheidungen von Justus vor Abend 1
+
+Erledigt damit Punkt 5 der offenen Punkte der Spezifikation.
+
+- **Arbeitsumgebung:** Cloud-Sitzung von Claude Code.
+- **Auswerter B:** Gemini 4 Neon über die Gemini-App. Justus überträgt das Skript unverändert.
