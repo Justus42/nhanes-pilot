@@ -53,3 +53,18 @@ Drei der fünf Befunde (N1, N2, N5) betreffen Text, der erst mit Version 2 entst
 - `.gitignore` schließt zusätzlich `data/work/` aus.
 
 **Bewertung der Befunde durch Claude:** Befund 2 behauptet, die R-Funktion setze die NCHS-Regel nicht genau um. Das ist nicht geprüft. Die Änderung ist davon unabhängig richtig, weil die Formel jetzt ausgeschrieben ist.
+
+## 2026-11-24 – Spezifikation Version 2.1, vor Beginn von Abend 2
+
+**Anlass:** zwei Fragen von Auswerter A in `OFFEN.md` (Branch `abend-1`, Pull Request 2). Justus hat beide am 24.11.2026 entschieden. Zu diesem Zeitpunkt waren noch keine Daten geladen und keine Ergebnisse gerechnet.
+
+| Frage | Entscheidung | Beleg |
+| --- | --- | --- |
+| Zu welcher Schätzung gehören die Standardfehler 1,2 und 0,6? | Zur altersadjustierten. Sie werden in Stufe 4 geprüft statt in Stufe 2. | NCHS-Report Nr. 158, Tabelle 2. Die Tabelle zeigt je Zeile nur eine Schätzung, und die Anmerkung lautet: „Outcomes for adults and older adults were age adjusted by the direct method to the projected U.S. Census 2000 population.“ |
+| Welche Fassung der Altersanteile gilt? | Die sechsstelligen Werte der Quelle: 0,396579, 0,371795, 0,231626. | Klein und Schoenborn, Healthy People 2010 Statistical Notes Nr. 20, Altersverteilung Nr. 12 (20–39, 40–59, ab 60 Jahre). Summe 1,000000. |
+
+Beide Belege hat Auswerter A gelesen. Claude hat sie als Prüfer unabhängig in den Quellen nachgeschlagen und kommt zum selben Ergebnis.
+
+**Nicht geändert:** Zielwerte, Toleranzen, Abbruchkriterium und Entscheidungsregel. Die Standardfehler 1,2 und 0,6 waren schon in Version 2 Zielwerte. Neu ist nur, an welcher Stufe sie geprüft werden.
+
+**Folge für Auswerter B:** B rechnet Stufe 4 ohnehin und wird damit auch gegen die zwei Standardfehler geprüft.
