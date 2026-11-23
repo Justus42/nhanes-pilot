@@ -10,7 +10,7 @@ Jede Frage mit Datum, Anlass und Beleg. Entscheidung durch Justus; Auswerter A �
 
 **Frage:** Soll SPEC.md als Klarstellung festhalten, dass die Standardfehler 1,2 (Adipositas, gesamt) und 0,6 (schwere Adipositas, gesamt) zur **altersadjustierten** Schätzung gehören und in **Stufe 4** geprüft werden? Dann haben alle rohen Standardfehler kein externes Ziel und stehen auf `extern nicht geprüft`. Zielwerte und Toleranzen ändern sich dadurch nicht.
 
-**Status:** offen. Muss vor Abend 2 entschieden sein.
+**Status:** beantwortet durch SPEC.md Version 2.1 (Pull Request 3). Die Standardfehler 1,2 und 0,6 gehören zur altersadjustierten Schätzung und werden in Stufe 4 geprüft.
 
 ## 2. Standardanteile: vier statt sechs Nachkommastellen (23.11.2026, Auswerter A)
 
@@ -22,4 +22,4 @@ Jede Frage mit Datum, Anlass und Beleg. Entscheidung durch Justus; Auswerter A �
 
 **Frage:** Bleibt es bei den vier Stellen der Spezifikation, oder sollen beide Auswerter die sechs Stellen der Quelle verwenden? A rechnet bis zur Entscheidung mit den Werten aus SPEC.md.
 
-**Status:** offen, nicht blockierend für Abend 1.
+**Status:** beantwortet durch SPEC.md Version 2.1 (Pull Request 3). Es gelten die sechsstelligen Werte der Quelle: 0,396579, 0,371795, 0,231626.

@@ -1,8 +1,8 @@
 # NHANES-Pilot: Spezifikation für die Abende 1–4
 
-Version 2 vom 23.11.2026 · Justus Jeserigk
+Version 2.1 vom 24.11.2026 · Justus Jeserigk
 
-Version 2 übernimmt die 18 Befunde des Reviews durch GPT 6.2 Astra (`review/openrouter/spec-v1-astra.md`) und die 5 Befunde des Reviews durch Gemini 4 Neon (`review/gemini/spec-v2-neon.md`). Die Änderungen stehen mit Begründung in `LOG.md`. Zielwerte, Toleranzen und die Schwelle der Entscheidungsregel sind unverändert.
+Version 2 übernimmt die 18 Befunde des Reviews durch GPT 6.2 Astra (`review/openrouter/spec-v1-astra.md`) und die 5 Befunde des Reviews durch Gemini 4 Neon (`review/gemini/spec-v2-neon.md`). Version 2.1 klärt zwei Fragen von Auswerter A aus `OFFEN.md` anhand der Quellen: die Zuordnung der zwei Standardfehler und die Stellenzahl der Altersanteile. Die Änderungen stehen mit Begründung in `LOG.md`. Zielwerte, Toleranzen und die Schwelle der Entscheidungsregel sind unverändert.
 
 ## Zweck und Abbruchkriterium
 
@@ -85,14 +85,14 @@ Auswerter A rechnet die Adipositas-Prävalenz Erwachsener nach, die das NCHS fü
 | Schwere Adipositas | Männer | 6,4 (5,1–8,0) | 6,6 (5,3–8,1) |
 | Schwere Adipositas | Frauen | 11,4 (9,7–13,3) | 11,7 (10,0–13,7) |
 
-Der Report nennt Standardfehler nur für die Gesamtgruppe: 1,2 (Adipositas) und 0,6 (schwere Adipositas). Zu welcher Schätzung sie gehören, klärt Tabelle 2 des Reports vor Abend 2.
+Der Report nennt Standardfehler nur für die Gesamtgruppe: 1,2 (Adipositas) und 0,6 (schwere Adipositas). Laut Tabelle 2 gehören beide zur altersadjustierten Schätzung. Sie werden deshalb in Stufe 4 geprüft.
 
 **Was extern geprüft wird:**
 
 - die drei Fallzahlen,
 - die zwölf Prävalenzen,
 - die sechs rohen Konfidenzintervalle,
-- die zwei Standardfehler der Gesamtgruppe, sobald sie zugeordnet sind.
+- die zwei altersadjustierten Standardfehler der Gesamtgruppe, in Stufe 4.
 
 Alle übrigen Standardfehler haben kein externes Ziel. In der Ergebnisdatei steht dort `extern nicht geprüft`, und es zählt der Vergleich A gegen B. Altersadjustierte Konfidenzintervalle sind kein Kriterium.
 
@@ -101,7 +101,7 @@ Alle übrigen Standardfehler haben kein externes Ziel. In der Ergebnisdatei steh
 - Design in R: `svydesign(ids = ~SDMVPSU, strata = ~SDMVSTRA, weights = ~WTMECPRP, nest = TRUE, data = <Designbasis>)`. Keine Endlichkeitskorrektur, Standardoptionen des Pakets. Teilgruppen entstehen über `subset()` auf dem Designobjekt.
 - Hat ein Stratum der Designbasis nur einen Cluster, hält A an und schreibt das in `OFFEN.md`.
 - Standardfehler per Taylor-Linearisierung.
-- Altersadjustierung direkt auf die projizierte US-Bevölkerung 2000, Altersgruppen 20–39, 40–59 und ab 60. Beide Auswerter verwenden fest die Standardanteile **0,3966, 0,3718 und 0,2316**, für Gesamt, Männer und Frauen gleich. A prüft die drei Werte vor Abend 2 gegen die NCHS-Quelle. Weichen sie ab, hält A an.
+- Altersadjustierung direkt auf die projizierte US-Bevölkerung 2000, Altersgruppen 20–39, 40–59 und ab 60. Beide Auswerter verwenden fest die Standardanteile **0,396579, 0,371795 und 0,231626**, für Gesamt, Männer und Frauen gleich. Quelle: Klein und Schoenborn, Healthy People 2010 Statistical Notes Nr. 20, Altersverteilung Nr. 12. Die drei Werte summieren sich zu 1.
 - Altersadjustiert in R: die Anteile der drei Altersgruppen gemeinsam schätzen, mit vollständiger Kovarianzmatrix (`svyby(..., covmat = TRUE)`), und mit `svycontrast` zur festen Summe verrechnen.
 
 **Konfidenzintervall der rohen Prävalenzen** nach Korn und Graubard in der Fassung des NCHS, ausgeschrieben:
@@ -119,9 +119,9 @@ Maßgeblich ist diese Formel. A darf zusätzlich `svyciprop(..., method = "beta"
 **Vier Stufen, in dieser Reihenfolge:**
 
 1. Fallzahlen: 8.295, 4.051 und 4.244 müssen exakt stimmen.
-2. Rohe Prävalenzen und Standardfehler.
+2. Rohe Prävalenzen und Standardfehler. Für diese Standardfehler gibt es kein externes Ziel.
 3. Konfidenzintervalle der rohen Prävalenzen.
-4. Altersadjustierte Prävalenzen und Standardfehler.
+4. Altersadjustierte Prävalenzen und Standardfehler. Extern geprüft werden hier auch die zwei Standardfehler der Gesamtgruppe.
 
 **Toleranz, vorab festgelegt:**
 
@@ -369,11 +369,11 @@ Weichen A und B voneinander ab, ändere nichts an A. Beschreibe mir nur, in welc
 Zehn Angaben in dieser Spezifikation sind nicht abschließend belegt oder noch nicht entschieden. Die ersten fünf werden geklärt, bevor der jeweilige Abend beginnt.
 
 1. **Zielwerte der Positivkontrolle.** Sie wurden maschinell aus dem PDF gelesen. Vor Abend 2 die Tabellen 2, 5 und 6 im Report selbst ansehen und mit der Tabelle oben vergleichen.
-2. **Standardfehler 1,2 und 0,6.** Unklar ist, ob sie zur rohen oder zur altersadjustierten Schätzung gehören. Tabelle 2 des Reports klärt das.
+2. **Standardfehler 1,2 und 0,6.** Geklärt am 24.11.2026: Sie gehören laut Tabelle 2 zur altersadjustierten Schätzung.
 3. **Download-Muster der Dateien.** Nicht getestet. In einer Cloud-Umgebung müssen die CDC-Domains freigegeben sein.
 4. **Kreatinin zwischen den Geräten.** Die Doku nennt eine Umrechnungsgleichung. Offen ist, ob die kombinierte Datei sie schon enthält.
 5. **Arbeitsumgebung und Auswerter B.** Noch nicht entschieden: Cloud-Sitzung oder PC, und welches Gemini-Modell auf welchem Weg das Skript von B schreibt.
-6. **Standardanteile der Altersgruppen** (0,3966, 0,3718, 0,2316). Claude und GPT 6.2 Astra nennen sie übereinstimmend aus dem Gedächtnis. Ein Quellenbeleg fehlt. A prüft sie vor Abend 2.
+6. **Standardanteile der Altersgruppen.** Geklärt am 24.11.2026: Die Quelle nennt 0,396579, 0,371795 und 0,231626. Diese sechsstelligen Werte gelten.
 7. **Die Formeln von Abend 4.** Claude und GPT 6.2 Astra nennen sie übereinstimmend aus dem Gedächtnis. Beide Auswerter prüfen sie gegen die Originalarbeiten. Die Erwartungswerte der Rechentests sind aus diesen Formeln berechnet.
 8. **Formel des Konfidenzintervalls.** Sie ist aus dem Gedächtnis ausgeschrieben und gegen die NCHS-Standards zur Darstellung von Anteilen (laut Astra Series 2, Nr. 175) zu prüfen. Ob `svyciprop(method = "beta")` dasselbe liefert, ist offen. Deshalb bleibt die Toleranz dort 0,2 Prozentpunkte.
 9. **Schwelle 30 Personen.** Für die Hauptanalyse gelten die NCHS-Standards. Sie betreffen den tatsächlichen und den effektiven Nenner eines Anteils und die Breite des Konfidenzintervalls und sind noch nachzulesen.
