@@ -1,0 +1,28 @@
+stufe,kennzahl,gruppe,methode,groesse,einheit,wert
+1,Analysegruppe,Gesamt,ungewichtet,Fallzahl,Personen,8295
+1,Analysegruppe,Männer,ungewichtet,Fallzahl,Personen,4051
+1,Analysegruppe,Frauen,ungewichtet,Fallzahl,Personen,4244
+2,Adipositas,Gesamt,roh,Praevalenz,Prozent,41.869862889614375
+2,Adipositas,Gesamt,roh,Standardfehler,Prozentpunkte,1.1806306544607676
+2,Adipositas,Männer,roh,Praevalenz,Prozent,41.583711014746825
+2,Adipositas,Männer,roh,Standardfehler,Prozentpunkte,1.9932265484225147
+2,Adipositas,Frauen,roh,Praevalenz,Prozent,42.13969415816589
+2,Adipositas,Frauen,roh,Standardfehler,Prozentpunkte,1.2452956434873053
+2,Schwere Adipositas,Gesamt,roh,Praevalenz,Prozent,8.976091895642632
+2,Schwere Adipositas,Gesamt,roh,Standardfehler,Prozentpunkte,0.5974926085519104
+2,Schwere Adipositas,Männer,roh,Praevalenz,Prozent,6.425333537558845
+2,Schwere Adipositas,Männer,roh,Standardfehler,Prozentpunkte,0.6790580066855284
+2,Schwere Adipositas,Frauen,roh,Praevalenz,Prozent,11.381368337912019
+2,Schwere Adipositas,Frauen,roh,Standardfehler,Prozentpunkte,0.8524789065462995
+4,Adipositas,Gesamt,altersadjustiert,Praevalenz,Prozent,41.87054718019816
+4,Adipositas,Gesamt,altersadjustiert,Standardfehler,Prozentpunkte,1.2173555047883053
+4,Adipositas,Männer,altersadjustiert,Praevalenz,Prozent,41.79502345105527
+4,Adipositas,Männer,altersadjustiert,Standardfehler,Prozentpunkte,2.0500713553017795
+4,Adipositas,Frauen,altersadjustiert,Praevalenz,Prozent,41.84669027334097
+4,Adipositas,Frauen,altersadjustiert,Standardfehler,Prozentpunkte,1.247519388325344
+4,Schwere Adipositas,Gesamt,altersadjustiert,Praevalenz,Prozent,9.2383029881892
+4,Schwere Adipositas,Gesamt,altersadjustiert,Standardfehler,Prozentpunkte,0.6339613199279086
+4,Schwere Adipositas,Männer,altersadjustiert,Praevalenz,Prozent,6.61731153004919
+4,Schwere Adipositas,Männer,altersadjustiert,Standardfehler,Prozentpunkte,0.7178945459111443
+4,Schwere Adipositas,Frauen,altersadjustiert,Praevalenz,Prozent,11.748508666741895
+4,Schwere Adipositas,Frauen,altersadjustiert,Standardfehler,Prozentpunkte,0.915099467049974
