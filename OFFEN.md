@@ -35,3 +35,53 @@ Jede Frage mit Datum, Anlass und Beleg. Entscheidung durch Justus; Auswerter A �
 **Frage:** Soll SPEC.md als Klarstellung ergänzen: „Ist p = 0 oder p = 1, gilt m = n“? Nicht blockierend für Abend 2.
 
 **Status:** beantwortet am 24.11.2026 durch Justus: keine Änderung an SPEC.md. Der Fall kann im Pilot nicht eintreten, das Skript bricht ab. Die Regel wird im Protokoll der Hauptanalyse festgelegt.
+
+## 4. Cockcroft-Gault und DuBois nicht gegen die Originalarbeit geprüft (24.11.2026, Auswerter A, Abend 4)
+
+**Anlass:** SPEC.md, Abend 4: „Jeder Auswerter prüft die Formeln gegen die Originalarbeit und nennt sie in `LOG.md`.“
+
+**Beleg:** CKD-EPI 2021 ist gegen Tabelle 2 der Originalarbeit geprüft und stimmt (`LOG.md`, 24.11.2026, Abend 4). An die Originale von Cockcroft und Gault (Nephron 1976) und von DuBois und DuBois (Arch Intern Med 1916) kommt A nicht heran: Der Netzwerk-Proxy der Cloud-Sitzung sperrt `karger.com`, `doi.org`, `jamanetwork.com` und `archive.org`. PubMed Central hat keinen Volltext. Das PubMed-Abstract von Cockcroft und Gault zeigt die Formel nicht („(see article)“), belegt nur „15% less in females“. Aus dem Gedächtnis prüft A nicht.
+
+**Frage:** Darf A mit diesen zwei Formeln zählen, obwohl sie nicht gegen das Original geprüft sind? Oder sollen erst die Hosts in der Umgebung freigegeben oder die Originale (PDF) ins Repo gelegt werden? Das Karger-PDF ist vermutlich kostenpflichtig, die Arbeit von 1916 gemeinfrei.
+
+**Status:** beantwortet am 24.11.2026 durch Justus: A zählt mit der Cockcroft-Gault-Formel aus SPEC.md, obwohl der Volltext der Originalarbeit nicht geprüft ist. Belegt sind über das Abstract der Originalarbeit (PubMed und Verlagsseite karger.com/nef/article-abstract/16/1/31/212046, vom Orchestrator gelesen): 140 minus Alter, Gewicht in kg, die Konstante 72, Kreatinin in mg/100 ml und 15 % weniger bei Frauen. Dass 72 mal Kreatinin im Nenner steht, zeigt die einzeilige Schreibweise des Abstracts nicht eindeutig. Die Prüfung am Volltext wird vor der Hauptanalyse nachgeholt. DuBois ist gegen das Original geprüft und stimmt mit SPEC.md überein, abgelesen vom Seitenbild des Verlagsscans auf Zenodo (`LOG.md`).
+
+## 5. Bezeichnerspalte und Reihenfolge der Ausgabedateien von Abend 4 (24.11.2026, Auswerter A)
+
+**Anlass:** SPEC.md verlangt, dass `results/A/abend4_fallzahlen.csv` und `results/B/abend4_fallzahlen.csv` „in jeder Zelle exakt übereinstimmen“. Die Spezifikation nennt die acht Zahlenspalten, aber nicht den Namen der Spalte mit dem Zeilennamen und nicht die Reihenfolge der Zeilen. Für `abend4_personen_*.csv` fehlen der Name der SEQN-Spalte und die Reihenfolge der Spalten.
+
+**Umsetzung von A, falls nichts anderes entschieden wird:** Erste Spalte `zeile`, Zeilen in der Reihenfolge der Spezifikation: METFORMIN, GABAPENTIN, PREGABALIN, DOAK\_GESAMT, ALLOPURINOL, SITAGLIPTIN, SPIRONOLACTONE, APIXABAN, RIVAROXABAN, DABIGATRAN, EDOXABAN, GESAMT; danach die acht Spalten in der Reihenfolge der Tabelle „Ausgabe“. Personendatei: `SEQN`, `analysegruppe`, die elf Trefferspalten in derselben Reihenfolge, `kat_ckdepi`, `kat_deindex`, `kat_cg`; ein leerer Wert ist ein leeres Feld.
+
+**Frage:** Reicht es, wenn `vergleich.py` Zeilen und Spalten über ihre Namen zuordnet? Dann beeinflussen Spaltenname und Reihenfolge das Ergebnis nicht. Nicht blockierend für A.
+
+**Status:** beantwortet am 24.11.2026 durch Justus: Ja. `vergleich.py` ordnet Zeilen und Spalten über ihre Namen zu. Spaltenkopf und Reihenfolge sind frei.
+
+## 6. „Ein Gewichtskriterium gibt es hier nicht“ (24.11.2026, Auswerter A)
+
+**Anlass:** SPEC.md, Abend 4, Analysegruppe. „Gewicht“ kann das Stichprobengewicht `WTMECPRP` oder das Körpergewicht `BMXWT` meinen.
+
+**Lesart von A:** gemeint ist das Stichprobengewicht, also keine Bedingung `WTMECPRP > 0`. `BMXWT` vorhanden und größer null wird im selben Satz ausdrücklich verlangt. Laut `LOG.md` (Abend 2) haben alle 14.300 Personen mit `RIDSTATR = 2` ein `WTMECPRP > 0`. Die Lesart ändert die Analysegruppe also nicht.
+
+**Frage:** Ist die Lesart richtig? Nicht blockierend.
+
+**Status:** beantwortet am 24.11.2026 durch Justus: Ja, gemeint ist das Stichprobengewicht. Keine Bedingung an `WTMECPRP`.
+
+## 7. Rückführbarkeit des Kreatinins auf IDMS (24.11.2026, Auswerter A)
+
+**Anlass:** CKD-EPI 2021 setzt standardisiertes Kreatinin voraus. Die gesicherte Seite zu P\_BIOPRO beschreibt eine enzymatische Methode auf dem Roche Cobas 6000, die „agrees well with recognized HPLC methods“. IDMS oder Rückführbarkeit nennt sie nicht (Suche nach „IDMS“, „traceab“, „isotope“, „standardiz“ ohne Treffer).
+
+**Einschätzung von A:** Kein Widerspruch zur Spezifikation. Die verlangt `LBXSCR` unverändert, solange die CDC keine Umrechnung vorschreibt, und das tut sie nicht (`LOG.md`, Abend 4). A rechnet nichts um.
+
+**Frage:** Soll die Rückführbarkeit vor der Hauptanalyse in einer Quelle der CDC belegt werden? Für den Pilot nicht blockierend.
+
+**Status:** beantwortet am 24.11.2026 durch Justus: Nicht im Pilot. Die Rückführbarkeit des Kreatinins wird im Protokoll der Hauptanalyse belegt.
+
+## 8. Bezug der Diskordanz-Spalten und Zahlenformat der Personendateien (24.11.2026, Auswerter A)
+
+**Anlass:** Lesart der Ausgabe von Abend 4, festgehalten in `LOG.md` vor dem Zählen.
+
+**a) Diskordanz-Spalten.** In der Tabelle „Ausgabe“ beginnen `n_ckdepi_u60`, `n_deindex_u60`, `n_cg_u60`, `n_irgendeine_u60` und `n_alter_80` mit „davon“, beziehen sich also auf die Personen der Zeile. Bei `n_diskordant_cg_ckdepi` und `n_diskordant_cg_deindex` fehlt das Wort. A liest beide ebenfalls als „davon“, also nur Personen mit Treffer in dieser Zeile, in `GESAMT` die ganze Analysegruppe. Gezählt wird jede verschiedene Kategorie, nicht nur ein Unterschied an der Grenze 60. **Frage:** Ist diese Lesart richtig?
+
+**b) Zahlenformat.** SPEC.md legt nicht fest, ob `SEQN` und die 1/0-Werte als `109263` und `1` oder als `109263.0` und `1.0` geschrieben werden. A schreibt ganze Zahlen ohne Dezimalpunkt. Liest B die `.xpt`-Dateien mit pandas, kommen diese Spalten als Gleitkommazahlen an. **Frage:** Soll `vergleich.py` `SEQN` und die Trefferspalten als Zahlen vergleichen statt als Text? Dann zählt `1.0` gegen `1` nicht als Abweichung, leer gegen gefüllt weiterhin schon.
+
+**Status:** beantwortet am 24.11.2026 durch Justus: a) Ja, die Lesart von A gilt: Personen der Zeile, jede verschiedene Kategorie. b) Ja. `vergleich.py` vergleicht `SEQN`, `analysegruppe` und die Trefferspalten als ganze Zahlen und die Kategorien als Text. Leer gegen gefüllt bleibt eine Abweichung.

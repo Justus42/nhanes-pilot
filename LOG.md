@@ -431,3 +431,344 @@ SHA-256 der Eingaben beim Lauf: SPEC.md `2727ca9e15ceee64c3a8d4043f80be305bccb8d
 A (R, `survey`) und B (Python, Varianz von Hand) liefern damit auf getrennten Wegen dieselben Schätzer und Standardfehler. Das bestätigt die Programmierung, nicht die Spezifikation selbst (SPEC.md, Definition 6).
 
 **Stand des Pilots:** Abende 1, 2 und 3 bestanden. Abend 4 steht aus.
+
+## 2026-11-24 – Abend 4, Phase 1 (vor dem Zählen)
+
+Auswerter A, Branch `abend-4` von `main` (Stand `e8d253c`, nach Abend 3). Gezählt ist noch nichts. Keine Datei von B, `results/B/`, `vergleich.py` oder `results/vergleich_abend2.csv` ist geöffnet worden.
+
+### 1. Prüflauf `A/01_download.R`
+
+Gestartet am 24.11.2026, 05:50 UTC. Alle vier Dateien wurden frisch geladen. Alle vier SHA-256-Prüfsummen stimmen mit `results/A/abend1_dateien.csv` überein, alle vier Zeilenzahlen stimmen mit SPEC.md. Kein Abbruch. Am Skript ist nichts geändert. R 4.3.3, von A nichts installiert.
+
+### 2. Kreatinin zwischen den Geräten (P\_BIOPRO)
+
+Gelesen: `docs/cdc/P_BIOPRO_2026-11-23.htm`, SHA-256 `ec7c2a15c1a114f907cc61f003b4c1218e625c4cbce2eadfa1e974d3bf4e38b5`, gleich der Prüfsumme aus Abend 1. Kopf der Seite: „Standard Biochemistry Profile (P_BIOPRO) … First Published: August 2021 Last Revised: NA“.
+
+**Ergebnis: Die CDC schreibt für `LBXSCR` innerhalb des Zyklus 2017–März 2020 keine Umrechnung zwischen Geräten vor.** Laut der Seite ist der ganze Zyklus auf einem Gerät gemessen. Die Umrechnungsgleichungen gelten nur für den Vergleich mit den Zyklen bis 2015–2016. `LBXSCR` wird unverändert verwendet. Damit ist auch Punkt 4 der offenen Punkte in SPEC.md beantwortet: Die Gleichung der Dokumentation betrifft den Wechsel zwischen den Zyklen, nicht die kombinierte Datei.
+
+Wörtlich, Abschnitt „Description of Laboratory Methodology“:
+
+> All methods were measured on the Roche Cobas 6000 (c501 module) analyzer.
+
+Wörtlich, Abschnitt „Analytic Notes“, Überschrift „Standard Biochemistry Profile regression equations to compare 2017-March 2020 and 2015-2016 data“:
+
+> Method validation (bridging) studies were performed to compare results from a laboratory, instrument, and method change between the 2015-2016 and 2017-2018 survey cycles using NHANES samples from late 2016. During the 2015-2016 cycle the Beckman Coulter UniCel DxC 800 Synchron was upgraded to the Beckman Coulter UniCel DxC 660i Synchron Access chemistry analyzer (DxC 660i). Previous analyses indicated that no statistical adjustment is needed for results obtained between the two Beckman UniCel® analyzers (i.e., DxC 800 and DxC 660i). During the 2017-2018 cycle the Roche Cobas 6000 chemistry analyzer (Cobas 6000) was used for the entire 2017-2018 cycle. Analyses comparing results obtained from the Cobas 6000 to those obtained from the DxC 660i using selected serum samples (n=248) from NHANES participants in 2016 indicate that adjustments are needed for some analytes as described below.
+
+> It is recommended that these equations be used when examining trends among standard biochemistry profile data across 1999-2016 and 2017-2018 cycles, or when combining 2017-2018 data with previous cycles.
+
+Zeile `LBXSCR` der Tabelle, wörtlich:
+
+> LBXSCR (mg/dL) | Non-weighted Deming | X (Cobas 6000) = 0.9515 [95% CI: 0.9365 to 0.9665] * Y (DxC 660i) + 0.06608 [95% CI: 0.05252 to 0.07963] | X (DxC 660i) = 1.051 [95%CI: 1.034 to 1.068] * Y (Cobas 6000) - 0.06945 [95%CI: -0.08474 to -0.05415] | 3.354 | 0.993
+
+Einschränkung: Der Satz zu den Bridging-Studien nennt ausdrücklich nur 2017–2018. Für 2019–März 2020 stützt sich das Ergebnis auf den Satz „All methods were measured on the Roche Cobas 6000 (c501 module) analyzer“ in der Dokumentation der kombinierten Datei. Die Seite listet die Methodendokumente zu Kreatinin in zwei Fassungen („February 2020“ und „August 2021“). Diese Dokumente sind nicht gesichert und nicht gelesen.
+
+Codebuch `LBXSCR`, wörtlich: „0.25 to 14.97 | Range of Values | 9475“, „. | Missing | 934 | 10409“. Untere Nachweisgrenze laut Analytic Notes: 0.10 mg/dL. Kein Wert liegt laut Codebuch darunter.
+
+### 3. Formeln gegen die Originalarbeiten
+
+**CKD-EPI 2021: geprüft, stimmt.**
+
+Quelle: Inker LA, Eneanya ND, Coresh J, et al. New Creatinine- and Cystatin C–Based Equations to Estimate GFR without Race. N Engl J Med 2021;385:1737–1749. doi:[10.1056/NEJMoa2102953](https://doi.org/10.1056/NEJMoa2102953), PMID 34554658. Gelesen am 24.11.2026 über PubMed Central (PMC8822996). Das ist das Autorenmanuskript in PMC, nicht der gesetzte Text des NEJM.
+
+Tabelle 2, Zeile „2021 CKD-EPI creatinine (2009 CKD-EPI creatinine fit without race); eGFRcr(AS), new“, wörtlich:
+
+> 142 (139 to 144) | F: −0.241 (−0.344 to −0.138); M: −0.302 (−0.403 to −0.202) | −1.200 (−1.211 to −1.189) | — | — | 0.9938 (0.9935 to 0.9942) | 1.012 (1.000 to 1.023) | —
+
+Fußnote zu Tabelle 2, wörtlich:
+
+> The cells show coefficients to use in the following formula: eGFR=μ×min(Scr/k,1)^a_1_^×max(Scr/k,1)^a_2_^×min(Scys/0.8,1)^b_1_^×max(Scys/0.8,1)^b_2_^×c^Age^×d[if female]×e[if Black]. Here, κ is 0.7 for female participants and 0.9 for male participants, min indicates the minimum of Scr/κ and 1, and max indicates the maximum of Scr/κ and 1.
+
+> The coefficient a_1_ is used for levels of creatinine less than or equal to 0.9 mg per deciliter for male participants and 0.7 mg per deciliter for female participants. The coefficient a_2_ is used for levels of creatinine greater than 0.9 mg per deciliter for male participants and 0.7 mg per deciliter for female participants.
+
+| SPEC.md | Originalarbeit, Tabelle 2 | Urteil |
+| --- | --- | --- |
+| 142 | μ = 142 | gleich |
+| min(Krea/k, 1)^a, Frauen a = −0,241, Männer a = −0,302 | a₁: F −0.241, M −0.302 | gleich |
+| max(Krea/k, 1)^(−1,200) | a₂ = −1.200 | gleich |
+| k = 0,7 Frauen, 0,9 Männer | κ = 0.7 female, 0.9 male | gleich |
+| 0,9938^Alter | c = 0.9938 | gleich |
+| bei Frauen mal 1,012 | d = 1.012 | gleich |
+| kein Faktor für Rasse | e: „—“ | gleich |
+
+Die Arbeit nennt Kreatinin in mg/dL („mg per deciliter“) und Ergebnisse in ml/min/1,73 m². Die Studienteilnehmer waren laut Methodenteil „18 years of age or older“, passend zur Analysegruppe ab 18.
+
+**Körperoberfläche nach DuBois: nicht gegen das Original geprüft.**
+
+Quelle: Du Bois D, Du Bois EF. A formula to estimate the approximate surface area if height and weight be known. Arch Intern Med 1916;17:863–871; Nachdruck Nutrition 1989;5:303–311 (PMID 2520314). PubMed führt nur den Nachdruck, ohne Abstract und ohne Volltext in PMC. Die Verlagsseite (`jamanetwork.com`), `doi.org` und `archive.org` sind aus dieser Cloud-Sitzung gesperrt: `CONNECT tunnel failed, response 403` vom Proxy; ein zweiter Versuch über das Abrufwerkzeug scheiterte an der Namensauflösung. **Die Formel der Spezifikation ist hier nicht belegt.**
+
+**Cockcroft-Gault: nicht gegen das Original geprüft.**
+
+Quelle: Cockcroft DW, Gault MH. Prediction of creatinine clearance from serum creatinine. Nephron 1976;16:31–41. doi:[10.1159/000180580](https://doi.org/10.1159/000180580), PMID 1244564. Kein Volltext in PMC. `karger.com` und `doi.org` sind gesperrt, wie oben. Gelesen ist nur das Abstract in PubMed, wörtlich:
+
+> A formula has been developed to predict creatinine clearance (Ccr) from serum creatinine (Scr) in adult males: (see article)(15% less in females). Derivation included the relationship found between age and 24-hour creatinine excretion/kg in 249 patients aged 18-92.
+
+Damit ist nur der Faktor 0,85 bei Frauen belegt („15% less in females“). Der Aufbau der Formel ((140 − Alter) · Gewicht / (72 · Kreatinin)) ist hier nicht belegt.
+
+**De-Indexierung** (indexierter Wert · Körperoberfläche / 1,73) ist eine Umrechnung der Einheit und stammt aus keiner der drei Arbeiten.
+
+Aus dem Gedächtnis ist keine Formel geprüft. Die Erwartungswerte der Rechentests hat die Spezifikation aus ihren eigenen Formeln berechnet (offener Punkt 7). Die Tests zeigen also, dass der Code die Formeln der Spezifikation umsetzt. Ob diese Formeln den Originalen entsprechen, zeigen sie nicht. Die Frage, ob trotzdem gezählt wird, steht als Frage 4 in `OFFEN.md`.
+
+### 4. Funktionen und Rechentests
+
+**Skripte, neu:**
+
+- `A/05_formeln.R`: nur Funktionen, liest keine Daten. `ckd_epi_2021`, `kof_dubois`, `ckd_epi_deindex`, `cockcroft_gault`, `kategorie` und `name_trifft` (Namensabgleich für `RXDDRUG` nach SPEC.md). Jede Funktion bricht bei fehlender, nicht endlicher oder nicht positiver Eingabe ab, beim Geschlecht bei einem anderen Wert als 1 oder 2. Vor dem ersten Lauf ergänzt: In `name_trifft` wird ein fehlender Name vor der Zerlegung durch einen leeren Text ersetzt. Er ergibt ohnehin keinen Treffer.
+- `A/06_rechentests.R`: die neun Rechentests aus SPEC.md mit den Erwartungswerten und Toleranzen der Spezifikation (0,01, bei der Körperoberfläche 0,0001 m²), dazu neun eigene Zusatzprüfungen von A zu Kategoriegrenzen und Namensabgleich. Die Zusatzprüfungen sind kein Kriterium der Spezifikation. Bricht ab, wenn ein Test nicht besteht. Schreibt `results/A/abend4_rechentests.csv`.
+
+**Ergebnis des ersten Laufs: alle 9 Rechentests der Spezifikation und alle 9 Zusatzprüfungen bestanden.** Die Werte stammen aus `results/A/abend4_rechentests.csv`, auf sechs Stellen gerundet:
+
+| Fall | Erwartet | Berechnet | Abweichung | Toleranz |
+| --- | --- | --- | --- | --- |
+| Mann, 60 J., 72 kg, Krea 1,0: Cockcroft-Gault | 80,00 | 80,000000 | 0,000000 | 0,01 |
+| Frau, 60 J., 72 kg, Krea 1,0: Cockcroft-Gault | 68,00 | 68,000000 | 0,000000 | 0,01 |
+| Mann, 60 J., Krea 0,9: CKD-EPI indexiert | 97,78 | 97,775014 | −0,004986 | 0,01 |
+| Frau, 60 J., Krea 0,7: CKD-EPI indexiert | 98,95 | 98,948315 | −0,001685 | 0,01 |
+| Mann, 60 J., Krea 1,8: CKD-EPI indexiert | 42,56 | 42,559047 | −0,000953 | 0,01 |
+| Mann, 60 J., Krea 0,45: CKD-EPI indexiert | 120,54 | 120,542154 | 0,002154 | 0,01 |
+| Frau, 60 J., Krea 0,35: CKD-EPI indexiert | 116,94 | 116,938261 | −0,001739 | 0,01 |
+| 72 kg, 175 cm: Körperoberfläche | 1,8704 | 1,870403 | 0,000003 | 0,0001 |
+| Mann, 60 J., 72 kg, 175 cm, Krea 1,8: CKD-EPI de-indexiert | 46,01 | 46,013049 | 0,003049 | 0,01 |
+
+Alle Abweichungen sind kleiner als 0,005 (Körperoberfläche: kleiner als 0,00005). Das passt zur Rundung der Erwartungswerte auf zwei beziehungsweise vier Nachkommastellen. Die Konsole zeigt Umlaute als Oktalfolgen, weil die Sitzung ohne `LANG` läuft. Die CSV-Datei ist UTF-8.
+
+SHA-256 beim Lauf: `A/05_formeln.R` `f0645e738f4bc4a111f3a9ee863d16b472cd7e3e405c54876574477b7e921172`, `A/06_rechentests.R` `5ac912fbb4e9f1f507aed15b4a5768f3aa5542cbe9ad5a6a5699e8eeb5a995b4`, `results/A/abend4_rechentests.csv` `78a3bc2896d2d5275297730f52acbaf1f2bb7fb34306793c69123b10a57b8547`.
+
+### 5. Abschnitt „Abend 4“ erneut gelesen: Fragen vor dem Zählen
+
+Gegen die gesicherten Seiten zu P\_RXQ\_RX, P\_BMX und P\_BIOPRO gelesen. Vier Fragen stehen in `OFFEN.md`:
+
+- Frage 4: Cockcroft-Gault und DuBois nicht gegen das Original geprüft. **Vor dem Zählen zu entscheiden.**
+- Frage 5: Name der Bezeichnerspalte und Reihenfolge in beiden Ausgabedateien. Nicht blockierend.
+- Frage 6: „Ein Gewichtskriterium gibt es hier nicht“ meint nach Lesart von A das Stichprobengewicht. Ohne Wirkung auf die Analysegruppe. Nicht blockierend.
+- Frage 7: Die Rückführbarkeit des Kreatinins auf IDMS ist in der Dokumentation nicht belegt. Nicht blockierend.
+
+**Stellen ohne Widerspruch zur Spezifikation**, wörtlich aus der Dokumentation:
+
+- P\_RXQ\_RX, RXDUSE: „In the past 30 days, have you used or taken medication for which a prescription is needed?“ Codes „1 | Yes | 24246“, „2 | No | 8701“, „7 | Refused | 7“, „9 | Don't know | 8“. Das passt zu „berichtete Einnahme im letzten Monat“.
+- P\_RXQ\_RX, RXDDRUG: „For multi-ingredient products, the ingredients were listed in alphabetical order (i.e., Acetaminophen; Codeine).“ Codes „55555 | Unknown | 20“, „77777 | Refused | 46“, „99999 | Don't know | 156“, „< blank > | Missing | 8716“. 24.024 Zeilen mit Namen plus 20 + 46 + 156 ergeben genau die 24.246 Zeilen mit `RXDUSE = 1`.
+- P\_RXQ\_RX: „Respondent sequence number (SEQN) in the prescription medication data is not a unique identifier. […] Analysts should convert a drug-level data to a person-level data […] before merging“. Das deckt sich mit SPEC.md.
+- P\_BMX: „RIDEXPRG for several pregnant women who were outside of this age range are not reported due to disclosure concerns. The body measures data for these participants are also not reported.“ Schwangere außerhalb von 20–44 Jahren haben also kein `BMXWT` und kein `BMXHT`. Sie fallen über die Bedingung „vorhanden“ ohnehin aus der Analysegruppe. Kein Widerspruch zu Definition 1.
+- P\_BMX: „The body weight data for participants who had limb amputations were set to “missing.”“ Diese Personen fallen ebenfalls aus der Analysegruppe. Das ist eine Folge der Spezifikation, kein Widerspruch.
+
+## 2026-11-24 – Abend 4, Phase 1, Zusatz: Lesart der Ausgabe (vor dem Zählen)
+
+Auftrag von Justus nach dem Entwurfs-PR 6. Es ist weiterhin nichts gezählt. Kein Skript ist geändert. Das Zählskript gibt es noch nicht. Es setzt die folgende Lesart um.
+
+**Bezeichnungen.** A ist die Analysegruppe aus SPEC.md, Abend 4: alle `SEQN` aus P\_DEMO mit `RIDAGEYR >= 18`, `RIDSTATR = 2`, `RIAGENDR` gleich 1 oder 2, `is.na(RIDEXPRG) | RIDEXPRG != 1` sowie `LBXSCR`, `BMXWT` und `BMXHT` jeweils vorhanden und größer null. P\_BIOPRO und P\_BMX werden per `SEQN` an P\_DEMO angefügt, ohne Personen zu verlieren. Eine Trefferzeile ist eine Zeile aus P\_RXQ\_RX mit `RXDUSE = 1` (nicht fehlend) und einem Namen, der laut `name_trifft` einen Suchbegriff der Zeile trifft. P(z) ist die Personenmenge der Ausgabezeile z: in einer Wirkstoffzeile die Personen aus A mit mindestens einer Trefferzeile für deren Suchbegriffe, in `GESAMT` ganz A. Alle Werte gehen ungerundet ein. „Unter 60“ heißt Wert < 60, gleichbedeutend mit einer Kategorie aus `u30`, `30_45`, `45_60`.
+
+### 1. Welche Personenmenge zählt jede Spalte?
+
+| Spalte | gezählte Personenmenge |
+| --- | --- |
+| `n_personen` | Alle Personen in P(z), also in einer Wirkstoffzeile die Personen der Analysegruppe mit mindestens einer Trefferzeile, in `GESAMT` die ganze Analysegruppe. |
+| `n_ckdepi_u60` | Die Personen in P(z), deren CKD-EPI 2021 indexiert unter 60 ml/min/1,73 m² liegt. |
+| `n_deindex_u60` | Die Personen in P(z), deren CKD-EPI 2021 de-indexiert (indexiert · KOF nach DuBois / 1,73) unter 60 ml/min liegt. |
+| `n_cg_u60` | Die Personen in P(z), deren Cockcroft-Gault-Wert unter 60 ml/min liegt. |
+| `n_irgendeine_u60` | Die Personen in P(z), bei denen mindestens einer der drei Werte unter 60 liegt; jede Person zählt höchstens einmal (Vereinigung, nicht Summe). |
+| `n_diskordant_cg_ckdepi` | Die Personen in P(z), deren Kategorie nach Cockcroft-Gault (`u30`, `30_45`, `45_60`, `ab60`) sich von der Kategorie nach CKD-EPI indexiert unterscheidet, egal an welcher der drei Grenzen. |
+| `n_diskordant_cg_deindex` | Die Personen in P(z), deren Kategorie nach Cockcroft-Gault sich von der Kategorie nach CKD-EPI de-indexiert unterscheidet, egal an welcher Grenze. |
+| `n_alter_80` | Die Personen in P(z) mit `RIDAGEYR = 80`, also mit dem auf 80 gedeckelten Alter. |
+
+Jede Spalte außer `n_personen` ist eine Teilmenge von P(z). Daraus folgen Prüfungen, die das Zählskript vor dem Schreiben macht: Jede Spalte ist kleiner oder gleich `n_personen`. `n_irgendeine_u60` ist mindestens so groß wie das Maximum der drei u60-Spalten und höchstens so groß wie ihre Summe. `DOAK_GESAMT` ist mindestens so groß wie jede einzelne DOAK-Zeile und höchstens so groß wie ihre Summe.
+
+Bei den zwei Diskordanz-Spalten steht in SPEC.md kein „davon“. A liest sie wie die übrigen Spalten als Teilmenge von P(z). Das steht als Frage 8a in `OFFEN.md`.
+
+### 2. Erste Spalte und Reihenfolge in `results/A/abend4_fallzahlen.csv`
+
+- Kopf der ersten Spalte: `zeile`.
+- Danach die acht Spalten in der Reihenfolge der Tabelle „Ausgabe“: `n_personen`, `n_ckdepi_u60`, `n_deindex_u60`, `n_cg_u60`, `n_irgendeine_u60`, `n_diskordant_cg_ckdepi`, `n_diskordant_cg_deindex`, `n_alter_80`.
+- Zwölf Zeilen in dieser Reihenfolge: `METFORMIN`, `GABAPENTIN`, `PREGABALIN`, `DOAK_GESAMT`, `ALLOPURINOL`, `SITAGLIPTIN`, `SPIRONOLACTONE`, `APIXABAN`, `RIVAROXABAN`, `DABIGATRAN`, `EDOXABAN`, `GESAMT`. Zuerst die sieben Zeilen der Tabelle in SPEC.md, dann die vier DOAK in der Reihenfolge des Satzes „Zusätzlich gibt es je eine Zeile …“, zuletzt `GESAMT`.
+- Format: Komma als Trenner, Kopfzeile, keine Anführungszeichen, keine Zeilennamen, Zeilenende LF, nur ASCII. Die Zahlen sind ganze Zahlen ohne Dezimalpunkt.
+
+Die Spezifikation legt Spaltenkopf und Reihenfolge nicht fest. Diese Festlegung ist die von A, siehe Frage 5 in `OFFEN.md`.
+
+### 3. Format von `data/work/abend4_personen_A.csv`
+
+- Genau 15.560 Datenzeilen, eine je `SEQN` aus P\_DEMO, aufsteigend nach `SEQN` sortiert, dazu eine Kopfzeile. Das Skript bricht ab, wenn `SEQN` in P\_DEMO nicht eindeutig ist oder die Zeilenzahl nicht 15.560 beträgt.
+- Spalten in dieser Reihenfolge: `SEQN`, `analysegruppe`, `METFORMIN`, `GABAPENTIN`, `PREGABALIN`, `DOAK_GESAMT`, `ALLOPURINOL`, `SITAGLIPTIN`, `SPIRONOLACTONE`, `APIXABAN`, `RIVAROXABAN`, `DABIGATRAN`, `EDOXABAN`, `kat_ckdepi`, `kat_deindex`, `kat_cg`. Eine Spalte `GESAMT` gibt es nicht.
+- `SEQN`: ganze Zahl ohne Dezimalpunkt und ohne wissenschaftliche Schreibweise, z. B. `109263`.
+- `analysegruppe`: `1` oder `0` für jede Person, nie leer.
+- Elf Trefferspalten: `1` oder `0` für Personen der Analysegruppe, auch für Personen ohne Medikamentenzeile (dann `0`). Für Personen außerhalb der Analysegruppe ein leeres Feld. Geschrieben wird `1` oder `0`, nicht `1.0`, `TRUE` oder `NA`.
+- `kat_ckdepi`, `kat_deindex`, `kat_cg`: `u30`, `30_45`, `45_60` oder `ab60` für Personen der Analysegruppe, ein leeres Feld für alle anderen.
+- Leere Werte: nichts zwischen zwei Kommas, beziehungsweise nichts nach dem letzten Komma. Kein `NA`, keine Anführungszeichen, kein Leerzeichen.
+- Format sonst wie oben: Komma, keine Anführungszeichen, keine Zeilennamen, LF, ASCII. Die Datei liegt laut SPEC.md nicht im Git.
+
+Welche Zahlenformate B schreibt, legt die Spezifikation nicht fest, etwa `1.0` statt `1` oder `109263.0` statt `109263`. Ein Vergleich als Text würde das als Abweichung zählen. Das steht als Frage 8b in `OFFEN.md`.
+
+## 2026-11-24 – Abend 4, Phase 1: Antworten von Justus, zweiter Versuch an den Originalen
+
+### Antworten auf `OFFEN.md`
+
+Justus hat die Fragen 5, 6, 7, 8a und 8b am 24.11.2026 beantwortet. Die Antworten stehen als Status in `OFFEN.md`. SPEC.md bleibt unverändert. Die Lesart von A aus dem vorigen Eintrag gilt damit unverändert, einschließlich der Diskordanz-Spalten (8a).
+
+### Erreichbarkeit nach der Freigabe der Domains
+
+Justus hat die vier zuvor gesperrten Domains freigegeben. Geprüft am 24.11.2026 zwischen 06:04 und 06:06 UTC mit `curl`:
+
+| Host | Ergebnis |
+| --- | --- |
+| `doi.org` | erreichbar, leitet weiter (zu `karger.com` bzw. `archinte.jamanetwork.com`) |
+| `karger.com` | Proxy lässt durch. Die Website antwortet mit HTTP 403, `server: cloudflare`, `cf-mitigated: challenge`, Seitentext „Just a moment… Enable JavaScript and cookies to continue“. Kein Artikel, kein PDF. |
+| `jamanetwork.com` | Proxy lässt durch. Die Website antwortet mit HTTP 403, `cf-mitigated: challenge`, wie bei Karger. |
+| `archinte.jamanetwork.com` | Ziel der DOI-Weiterleitung für DuBois. „Could not resolve host“. |
+| `archive.org` | erreichbar (HTTP 200). Suche, Metadaten und die Textansicht `/stream/…` funktionieren. |
+| `ia800100.us.archive.org` | Proxy sperrt (kein Verbindungsaufbau). Dort liegen die Dateien der Scans (PDF, Seitenbilder). Bilder der Seiten konnten deshalb nicht angesehen werden. |
+| `zenodo.org` | Proxy sperrt (`CONNECT tunnel failed, response 403`). Die Adresse `https://zenodo.org/records/1423319` ist nicht erreichbar. |
+| `scholar.archive.org`, `api.fatcat.wiki` | Proxy sperrt (kein Verbindungsaufbau). |
+
+Die Cloudflare-Prüfung bei Karger und JAMA hat A nicht umgangen.
+
+### DuBois: gegen das Original geprüft, stimmt mit SPEC.md überein
+
+Quelle: Du Bois D, Du Bois EF. Clinical calorimetry. Tenth paper. A formula to estimate the approximate surface area if height and weight be known. Arch Intern Med 1916;17(6, Teil 2):863–871. Gelesen am 24.11.2026 als OCR-Text zweier unabhängiger Scans auf archive.org, Textansicht `https://archive.org/stream/<ID>/<ID>_djvu.txt`:
+
+- Scan 1: `n062archivesofintern17ameruoft`, „Archives of internal medicine“, Band „17 n.06 pt.02“, Beitrag „Gerstein - University of Toronto“. SHA-256 der abgerufenen Seite `8008ee01a1d502d4537d2d06f4e36eba6cb4964c6661a2d1d5400b27a416a1f8`.
+- Scan 2: `sim_jama-internal-medicine_1916-06-15_17_6`, „The Archives of Internal Medicine 1916-06-15: Vol 17 Iss 6“. SHA-256 der abgerufenen Seite `6b0c510b0e5c63380103642194d377406fc27e734bb966277b14ce2351692738`.
+
+Kopf des Artikels in Scan 2, wörtlich: „CLINICAL CALORIMETRY / TENTH PAPER / A FORMULA TO ESTIMATE THE APPROXIMATE SURFACE AREA IF HEIGHT AND WEIGHT BE KNOWN* / DELAFIELD Dv BOIS, B.S. … AND EUGENE F. Dv BOIS, M.D.“ („Dv“ ist ein OCR-Fehler für „Du“.)
+
+Seite 870 laut Seitenkopf („870 THE ARCHIVES OF INTERNAL MEDICINE“), Scan 1, wörtlich, einschließlich der OCR-Fehler:
+
+> The best values of "a" and "b" were found to be a = 2.35 and b = 1.38 giving the formula the final form of A = 1'2-35 X H1/13S X C or A = W0-425 X H0T25 X 71.84. This formula can be solved by logarithms as follows : Log. A = Log. W X 0.425 + Log. H X 0.725 + 1.8564. 1.8564 is a constant equal to Log. C.
+
+Dieselbe Logarithmus-Zeile in Scan 2: „Log. A= Log. W X 0.425 + Log. H &amp; 0.725 + 1.8564.“
+
+Seite 871, „SUMMARY AND CONCLUSIONS“, Scan 1, wörtlich:
+
+> This is expressed in the terms A = W0-*23 X H0-725 X C. A being the surface area in square centimeters, H the height in centimeters. W the weight in kilograms and C the constant, 71.84.
+
+Scan 2, gleiche Stelle: „A being the surface area in square centimeters, H the height in centimeters, W the weight in kilo- grams and C the constant, 71.84.“
+
+**Lesung:** In der direkten Schreibweise sind die Hochzahlen in beiden Scans von der OCR verstümmelt („W0-425“, „H0T25“, „W0-*23“). In beiden Scans eindeutig ist die Logarithmusform: log A = 0,425 · log W + 0,725 · log H + 1,8564. Sie bestätigt die Hochzahlen 0,425 und 0,725. Zwei weitere Angaben passen dazu: Die Exponenten folgen aus a = 2,35 und b = 1,38 (1/2,35 = 0,4255, 1/1,38 = 0,7246), und 1,8564 ist der Zehnerlogarithmus von 71,84 (log₁₀ 71,84 = 1,85637). Einheiten laut Original: A in cm², W in kg, H in cm.
+
+| SPEC.md | Original | Urteil |
+| --- | --- | --- |
+| Gewicht^0,425 | W^0.425, W in Kilogramm | gleich |
+| Größe^0,725 | H^0.725, H in Zentimetern | gleich |
+| 0,007184, Ergebnis in m² | C = 71.84, A in Quadratzentimetern; 71,84 cm² = 0,007184 m² | gleich |
+
+**Einschränkung:** Gelesen ist OCR-Text, nicht das Seitenbild. Die Bilder liegen auf `ia800100.us.archive.org`, und den sperrt der Proxy. Die Prüfung stützt sich auf die Übereinstimmung zweier unabhängiger Scans und auf die in sich stimmigen Angaben a, b und log C.
+
+### Cockcroft-Gault: Original weiterhin nicht erreichbar
+
+Versucht am 24.11.2026:
+
+- `https://doi.org/10.1159/000180580` leitet weiter zu `https://karger.com/article/doi/10.1159/000180580` und endet dort in der Cloudflare-Prüfung (HTTP 403).
+- `https://karger.com/nef/article/16/1/31/823303`: Cloudflare-Prüfung (HTTP 403).
+- `https://karger.com/nef/article-pdf/16/1/31/3301838/000180580.pdf`: Cloudflare-Prüfung (HTTP 403).
+- archive.org: Die Suche nach „nephron“ im Jahr 1976 und nach „cockcroft gault creatinine clearance“ findet keinen Scan des Originals, nur spätere PMC-Arbeiten, die die Formel zitieren. Diese sind Sekundärquellen und zählen nicht. Die Suche nach der DOI lieferte einen Fehler des Suchdienstes.
+- `scholar.archive.org` und `api.fatcat.wiki`: vom Proxy gesperrt.
+- PubMed Central: kein Volltext (PMID 1244564 ohne PMCID).
+
+**Belegt bleibt nur das PubMed-Abstract** („…in adult males: (see article)(15% less in females)“). Der Aufbau (140 − Alter) · Gewicht / (72 · Kreatinin) ist nicht am Original geprüft.
+
+### Folge
+
+Nach der Vorgabe von Justus gilt: Bleibt ein Original unerreichbar, wird angehalten und nicht gezählt. Frage 4 in `OFFEN.md` bleibt offen. Phase 2 hat nicht begonnen. Kein Skript ist geändert, nichts ist gezählt.
+
+## 2026-11-24 – Abend 4, Phase 1: DuBois am Seitenbild geprüft (Zenodo)
+
+Justus hat `zenodo.org` freigegeben. Am 24.11.2026 um 06:07 UTC ist `zenodo.org` erreichbar (HTTP 200).
+
+**Quelle:** Zenodo-Eintrag 1423319 (`https://zenodo.org/records/1423319`), laut API: Titel „Clinical Calorimetry: Tenth Paper a Formula to Estimate the Approximate Surface Area if Height and Weight Be Known“, Datum 1916-06-01, DOI 10.1001/archinte.1916.00080130010002, Lizenz `cc-zero`. Datei `article.pdf`, 1.017.854 Bytes, 9 Seiten. MD5 `dbdc38f50b63153c67dad5900cfa205c`, gleich der Prüfsumme in der API. SHA-256 `2ee8b596cf23ee09e3ace524700747e544444a991073274636cc90306f8a1ba9`. Die Fußzeile jeder Seite lautet „Downloaded From: http://archinte.jamanetwork.com/ by a University of Arizona Health Sciences Library User on 08/31/2013“. Es ist also der Scan des Verlags.
+
+Die PDF-Seiten 8 und 9 (Heftseiten 870 und 871) hat A mit `pdftoppm` als Bild gerendert und vom Bild abgelesen.
+
+Seite 870, wörtlich nach dem Seitenbild (Hochzahlen mit ^):
+
+> The best values of "a" and "b" were found to be a = 2.35 and b = 1.38 giving the formula the final form of A = W^1/2.35 × H^1/1.38 × C or A = W^0.425 × H^0.725 × 71.84. This formula can be solved by logarithms as follows:
+> Log. A = Log. W × 0.425 + Log. H × 0.725 + 1.8564.
+> 1.8564 is a constant equal to Log. C.
+
+Seite 871, „Summary and Conclusions“, wörtlich nach dem Seitenbild:
+
+> This is expressed in the terms A = W^0.425 × H^0.725 × C. A being the surface area in square centimeters, H the height in centimeters, W the weight in kilograms and C the constant, 71.84.
+
+Das Seitenbild bestätigt die Lesung aus dem vorigen Eintrag. Die Einschränkung „nur OCR-Text, nicht das Seitenbild“ ist damit erledigt. **Ergebnis unverändert: Die DuBois-Formel in SPEC.md stimmt mit dem Original überein** (W^0,425 · H^0,725 · 71,84 cm² = 0,007184 · W^0,425 · H^0,725 m², W in kg, H in cm).
+
+**Cockcroft-Gault:** Der Zenodo-Eintrag enthält nur die Arbeit von DuBois. Das Original von Cockcroft und Gault bleibt unerreichbar (siehe voriger Eintrag). Frage 4 bleibt offen. Nichts gezählt.
+
+## 2026-11-24 – Abend 4: Frage 4 entschieden, bekannte Lücke Cockcroft-Gault
+
+**Entscheidung von Justus am 24.11.2026**, wörtlich als Status in `OFFEN.md`, Frage 4:
+
+> A zählt mit der Cockcroft-Gault-Formel aus SPEC.md, obwohl der Volltext der Originalarbeit nicht geprüft ist. Belegt sind über das Abstract der Originalarbeit (PubMed und Verlagsseite karger.com/nef/article-abstract/16/1/31/212046, vom Orchestrator gelesen): 140 minus Alter, Gewicht in kg, die Konstante 72, Kreatinin in mg/100 ml und 15 % weniger bei Frauen. Dass 72 mal Kreatinin im Nenner steht, zeigt die einzeilige Schreibweise des Abstracts nicht eindeutig. Die Prüfung am Volltext wird vor der Hauptanalyse nachgeholt.
+
+**Bekannte Lücke:** Die Cockcroft-Gault-Formel ist nicht am Volltext der Originalarbeit geprüft. Die Belege aus der Verlagsseite hat der Orchestrator gelesen, nicht Auswerter A. A hat nur das PubMed-Abstract gelesen. Dort steht die Formel als „(see article)“, belegt ist nur „15% less in females“. Offen ist vor allem, ob 72 · Kreatinin im Nenner steht. Die Prüfung am Volltext wird vor der Hauptanalyse nachgeholt. Davon betroffen sind die Spalten `n_cg_u60`, `n_irgendeine_u60`, `n_diskordant_cg_ckdepi` und `n_diskordant_cg_deindex` sowie die Spalte `kat_cg` der Personendatei.
+
+Stand der Formelprüfung damit: CKD-EPI 2021 und DuBois sind am Original geprüft und stimmen. Cockcroft-Gault ist nur teilweise über das Abstract belegt, siehe oben.
+
+Diese Entscheidung gilt als „weiter“ für Phase 2. Sie ist vor dem Zählen committet. Die Entscheidungsregel wendet A nicht an.
+
+## 2026-11-24 – Abend 4, Phase 2: Fallzahlen gezählt (Auswerter A)
+
+Phase 2 nach dem „weiter“ von Justus (Status von Frage 4 in `OFFEN.md`, committet in `b6e85d0`). Die Entscheidungsregel ist **nicht** angewendet. Das geschieht erst nach dem Vergleich mit B.
+
+### Skript
+
+`A/07_fallzahlen.R`, neu. Es lädt `A/05_formeln.R`, bricht ab, wenn `results/A/abend4_rechentests.csv` fehlt oder einen nicht bestandenen Test enthält, und prüft die SHA-256 jeder Rohdatei gegen `results/A/abend1_dateien.csv`. Danach setzt es die Analysegruppe, die Schätzer, die Treffer und die acht Spalten genau nach der Lesart im Eintrag „Abend 4, Phase 1, Zusatz: Lesart der Ausgabe“ um, einschließlich der Antworten auf die Fragen 5 bis 8. Vor dem Schreiben prüft es, ob die Ergebnisse in sich stimmig sind, und bricht sonst ab:
+
+- Keine Spalte ist größer als `n_personen`.
+- `n_irgendeine_u60` liegt zwischen dem Maximum und der Summe der drei u60-Spalten.
+- `DOAK_GESAMT` liegt zwischen dem Maximum und der Summe der Einzel-DOAK und ist je Person das Oder der vier.
+- `GESAMT` ist gleich der Analysegruppe.
+- Die Kategorien sind genau für die Analysegruppe gefüllt.
+- Die Personendatei hat 15.560 Zeilen, streng aufsteigend nach `SEQN`.
+
+Zusätzlich schreibt das Skript `results/A/abend4_treffernamen.csv`. Die Datei verlangt die Spezifikation nicht. Sie dient nur zur Kontrolle und listet jede `RXDDRUG`-Schreibweise mit Treffer und die Zahl ihrer Trefferzeilen (`RXDUSE = 1`) je Ausgabezeile. Die Zahlen beziehen sich auf Medikamentenzeilen, nicht auf Personen.
+
+**Änderung vor dem ersten Lauf, nicht danach:** Im Entwurf stand `read.xport(pfad, as.is = TRUE)`. `foreign::read.xport` reicht `...` an `as.data.frame` weiter. Dort wäre `as.is` als zusätzliche Spalte gelandet. Das Argument ist vor dem ersten Lauf gestrichen. R 4.3 liest Texte ohnehin als Text.
+
+**Änderungen nach dem ersten Lauf: keine.** Der erste Lauf begann am 24.11.2026 um 06:35 UTC und lief ohne Abbruch. Unmittelbar davor lief `A/06_rechentests.R` noch einmal und bestand: alle 18 Prüfungen, `results/A/abend4_rechentests.csv` Byte für Byte unverändert. Ein zweiter Lauf von `A/07_fallzahlen.R` erzeugt alle drei Ausgabedateien Byte für Byte gleich.
+
+| Datei | SHA-256 |
+| --- | --- |
+| `A/05_formeln.R` | `f0645e738f4bc4a111f3a9ee863d16b472cd7e3e405c54876574477b7e921172` |
+| `A/07_fallzahlen.R` | `9c78fe3cc574c8c5373aa61492f312590d6b1f7accba6d81cd7d824e2d16ec9f` |
+| `results/A/abend4_fallzahlen.csv` | `5dbbc88421c999fd8221d7a29359fbcdf1e70ba89e2886fd8fff2a8edee79990` |
+| `results/A/abend4_treffernamen.csv` | `920bffd296f349dcf60af9b77bf3e354bb2619d850d37a8d92e97b1ca0a1ad6b` |
+| `data/work/abend4_personen_A.csv` (nicht im Git) | `05967ffe1c6cce629bd11a81d9787818946d50750545f9e908393fd3a636e2af` |
+
+### Analysegruppe
+
+Aus der Konsolenausgabe, kumulativ, jede Bedingung zusätzlich zu den vorigen:
+
+| Bedingung | Personen |
+| --- | --- |
+| P\_DEMO | 15.560 |
+| Alter ≥ 18 | 9.693 |
+| `RIDSTATR = 2` | 8.965 |
+| `RIAGENDR` 1 oder 2 | 8.965 |
+| ohne dokumentierte Schwangerschaft | 8.878 |
+| `LBXSCR` vorhanden und > 0 | 8.181 |
+| `BMXWT` vorhanden und > 0 | 8.066 |
+| `BMXHT` vorhanden und > 0 | **8.046** |
+
+P\_RXQ\_RX hat 32.962 Zeilen von 15.560 Personen. Keine `SEQN` fehlt in P\_DEMO. `SEQN` ist in P\_DEMO, P\_BMX und P\_BIOPRO eindeutig.
+
+### Ergebnis: `results/A/abend4_fallzahlen.csv`
+
+Aus der Datei übernommen, ungewichtete Personenzahlen:
+
+| zeile | n\_personen | n\_ckdepi\_u60 | n\_deindex\_u60 | n\_cg\_u60 | n\_irgendeine\_u60 | n\_diskordant\_cg\_ckdepi | n\_diskordant\_cg\_deindex | n\_alter\_80 |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| METFORMIN | 816 | 91 | 59 | 91 | 126 | 90 | 67 | 58 |
+| GABAPENTIN | 326 | 70 | 56 | 61 | 85 | 57 | 35 | 48 |
+| PREGABALIN | 49 | 13 | 12 | 11 | 16 | 12 | 9 | 3 |
+| DOAK\_GESAMT | 129 | 47 | 31 | 41 | 57 | 36 | 26 | 56 |
+| ALLOPURINOL | 126 | 59 | 37 | 40 | 65 | 47 | 22 | 28 |
+| SITAGLIPTIN | 88 | 19 | 13 | 17 | 25 | 20 | 11 | 4 |
+| SPIRONOLACTONE | 81 | 27 | 20 | 22 | 32 | 21 | 14 | 14 |
+| APIXABAN | 70 | 27 | 18 | 23 | 33 | 24 | 14 | 32 |
+| RIVAROXABAN | 49 | 18 | 12 | 15 | 21 | 10 | 9 | 20 |
+| DABIGATRAN | 10 | 2 | 1 | 3 | 3 | 2 | 3 | 4 |
+| EDOXABAN | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| GESAMT | 8046 | 642 | 509 | 756 | 961 | 674 | 501 | 494 |
+
+**Getroffene Schreibweisen** laut `results/A/abend4_treffernamen.csv`: Bei METFORMIN zählen neun Kombinationspräparate mit, etwa „METFORMIN; SITAGLIPTIN“ und „GLIPIZIDE; METFORMIN“. Bei SITAGLIPTIN zählen „ERTUGLIFLOZIN; SITAGLIPTIN“ und „METFORMIN; SITAGLIPTIN“ mit, bei SPIRONOLACTONE „HYDROCHLOROTHIAZIDE; SPIRONOLACTONE“. Die übrigen Wirkstoffe kommen nur als Einzelsubstanz vor. EDOXABAN kommt in keiner Trefferzeile vor. Kein Treffer betrifft einen Namen, in dem der Suchbegriff nur als Teil eines anderen Worts steht. Das schließt die Regel „exakte Gleichheit einer Folge“ aus.
+
+### Hinweise
+
+- Die Spalten `n_cg_u60`, `n_irgendeine_u60`, `n_diskordant_cg_ckdepi`, `n_diskordant_cg_deindex` und `kat_cg` hängen von der Cockcroft-Gault-Formel ab. Deren Prüfung am Volltext steht noch aus (bekannte Lücke, siehe oben).
+- Die Zahlen sind nicht mit B verglichen. Erst danach wird die Entscheidungsregel angewendet.
+- `data/work/abend4_personen_A.csv`: 15.560 Datenzeilen plus Kopfzeile, 16 Spalten, ASCII, Format wie im Eintrag zur Lesart festgelegt. Die Datei liegt laut `.gitignore` nicht im Git.
