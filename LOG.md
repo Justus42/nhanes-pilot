@@ -699,3 +699,76 @@ Das Seitenbild bestätigt die Lesung aus dem vorigen Eintrag. Die Einschränkung
 Stand der Formelprüfung damit: CKD-EPI 2021 und DuBois sind am Original geprüft und stimmen. Cockcroft-Gault ist nur teilweise über das Abstract belegt, siehe oben.
 
 Diese Entscheidung gilt als „weiter“ für Phase 2. Sie ist vor dem Zählen committet. Die Entscheidungsregel wendet A nicht an.
+
+## 2026-11-24 – Abend 4, Phase 2: Fallzahlen gezählt (Auswerter A)
+
+Phase 2 nach dem „weiter“ von Justus (Status von Frage 4 in `OFFEN.md`, committet in `b6e85d0`). Die Entscheidungsregel ist **nicht** angewendet. Das geschieht erst nach dem Vergleich mit B.
+
+### Skript
+
+`A/07_fallzahlen.R`, neu. Es lädt `A/05_formeln.R`, bricht ab, wenn `results/A/abend4_rechentests.csv` fehlt oder einen nicht bestandenen Test enthält, und prüft die SHA-256 jeder Rohdatei gegen `results/A/abend1_dateien.csv`. Danach setzt es die Analysegruppe, die Schätzer, die Treffer und die acht Spalten genau nach der Lesart im Eintrag „Abend 4, Phase 1, Zusatz: Lesart der Ausgabe“ um, einschließlich der Antworten auf die Fragen 5 bis 8. Vor dem Schreiben prüft es, ob die Ergebnisse in sich stimmig sind, und bricht sonst ab:
+
+- Keine Spalte ist größer als `n_personen`.
+- `n_irgendeine_u60` liegt zwischen dem Maximum und der Summe der drei u60-Spalten.
+- `DOAK_GESAMT` liegt zwischen dem Maximum und der Summe der Einzel-DOAK und ist je Person das Oder der vier.
+- `GESAMT` ist gleich der Analysegruppe.
+- Die Kategorien sind genau für die Analysegruppe gefüllt.
+- Die Personendatei hat 15.560 Zeilen, streng aufsteigend nach `SEQN`.
+
+Zusätzlich schreibt das Skript `results/A/abend4_treffernamen.csv`. Die Datei verlangt die Spezifikation nicht. Sie dient nur zur Kontrolle und listet jede `RXDDRUG`-Schreibweise mit Treffer und die Zahl ihrer Trefferzeilen (`RXDUSE = 1`) je Ausgabezeile. Die Zahlen beziehen sich auf Medikamentenzeilen, nicht auf Personen.
+
+**Änderung vor dem ersten Lauf, nicht danach:** Im Entwurf stand `read.xport(pfad, as.is = TRUE)`. `foreign::read.xport` reicht `...` an `as.data.frame` weiter. Dort wäre `as.is` als zusätzliche Spalte gelandet. Das Argument ist vor dem ersten Lauf gestrichen. R 4.3 liest Texte ohnehin als Text.
+
+**Änderungen nach dem ersten Lauf: keine.** Der erste Lauf begann am 24.11.2026 um 06:35 UTC und lief ohne Abbruch. Unmittelbar davor lief `A/06_rechentests.R` noch einmal und bestand: alle 18 Prüfungen, `results/A/abend4_rechentests.csv` Byte für Byte unverändert. Ein zweiter Lauf von `A/07_fallzahlen.R` erzeugt alle drei Ausgabedateien Byte für Byte gleich.
+
+| Datei | SHA-256 |
+| --- | --- |
+| `A/05_formeln.R` | `f0645e738f4bc4a111f3a9ee863d16b472cd7e3e405c54876574477b7e921172` |
+| `A/07_fallzahlen.R` | `9c78fe3cc574c8c5373aa61492f312590d6b1f7accba6d81cd7d824e2d16ec9f` |
+| `results/A/abend4_fallzahlen.csv` | `5dbbc88421c999fd8221d7a29359fbcdf1e70ba89e2886fd8fff2a8edee79990` |
+| `results/A/abend4_treffernamen.csv` | `920bffd296f349dcf60af9b77bf3e354bb2619d850d37a8d92e97b1ca0a1ad6b` |
+| `data/work/abend4_personen_A.csv` (nicht im Git) | `05967ffe1c6cce629bd11a81d9787818946d50750545f9e908393fd3a636e2af` |
+
+### Analysegruppe
+
+Aus der Konsolenausgabe, kumulativ, jede Bedingung zusätzlich zu den vorigen:
+
+| Bedingung | Personen |
+| --- | --- |
+| P\_DEMO | 15.560 |
+| Alter ≥ 18 | 9.693 |
+| `RIDSTATR = 2` | 8.965 |
+| `RIAGENDR` 1 oder 2 | 8.965 |
+| ohne dokumentierte Schwangerschaft | 8.878 |
+| `LBXSCR` vorhanden und > 0 | 8.181 |
+| `BMXWT` vorhanden und > 0 | 8.066 |
+| `BMXHT` vorhanden und > 0 | **8.046** |
+
+P\_RXQ\_RX hat 32.962 Zeilen von 15.560 Personen. Keine `SEQN` fehlt in P\_DEMO. `SEQN` ist in P\_DEMO, P\_BMX und P\_BIOPRO eindeutig.
+
+### Ergebnis: `results/A/abend4_fallzahlen.csv`
+
+Aus der Datei übernommen, ungewichtete Personenzahlen:
+
+| zeile | n\_personen | n\_ckdepi\_u60 | n\_deindex\_u60 | n\_cg\_u60 | n\_irgendeine\_u60 | n\_diskordant\_cg\_ckdepi | n\_diskordant\_cg\_deindex | n\_alter\_80 |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| METFORMIN | 816 | 91 | 59 | 91 | 126 | 90 | 67 | 58 |
+| GABAPENTIN | 326 | 70 | 56 | 61 | 85 | 57 | 35 | 48 |
+| PREGABALIN | 49 | 13 | 12 | 11 | 16 | 12 | 9 | 3 |
+| DOAK\_GESAMT | 129 | 47 | 31 | 41 | 57 | 36 | 26 | 56 |
+| ALLOPURINOL | 126 | 59 | 37 | 40 | 65 | 47 | 22 | 28 |
+| SITAGLIPTIN | 88 | 19 | 13 | 17 | 25 | 20 | 11 | 4 |
+| SPIRONOLACTONE | 81 | 27 | 20 | 22 | 32 | 21 | 14 | 14 |
+| APIXABAN | 70 | 27 | 18 | 23 | 33 | 24 | 14 | 32 |
+| RIVAROXABAN | 49 | 18 | 12 | 15 | 21 | 10 | 9 | 20 |
+| DABIGATRAN | 10 | 2 | 1 | 3 | 3 | 2 | 3 | 4 |
+| EDOXABAN | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| GESAMT | 8046 | 642 | 509 | 756 | 961 | 674 | 501 | 494 |
+
+**Getroffene Schreibweisen** laut `results/A/abend4_treffernamen.csv`: Bei METFORMIN zählen neun Kombinationspräparate mit, etwa „METFORMIN; SITAGLIPTIN“ und „GLIPIZIDE; METFORMIN“. Bei SITAGLIPTIN zählen „ERTUGLIFLOZIN; SITAGLIPTIN“ und „METFORMIN; SITAGLIPTIN“ mit, bei SPIRONOLACTONE „HYDROCHLOROTHIAZIDE; SPIRONOLACTONE“. Die übrigen Wirkstoffe kommen nur als Einzelsubstanz vor. EDOXABAN kommt in keiner Trefferzeile vor. Kein Treffer betrifft einen Namen, in dem der Suchbegriff nur als Teil eines anderen Worts steht. Das schließt die Regel „exakte Gleichheit einer Folge“ aus.
+
+### Hinweise
+
+- Die Spalten `n_cg_u60`, `n_irgendeine_u60`, `n_diskordant_cg_ckdepi`, `n_diskordant_cg_deindex` und `kat_cg` hängen von der Cockcroft-Gault-Formel ab. Deren Prüfung am Volltext steht noch aus (bekannte Lücke, siehe oben).
+- Die Zahlen sind nicht mit B verglichen. Erst danach wird die Entscheidungsregel angewendet.
+- `data/work/abend4_personen_A.csv`: 15.560 Datenzeilen plus Kopfzeile, 16 Spalten, ASCII, Format wie im Eintrag zur Lesart festgelegt. Die Datei liegt laut `.gitignore` nicht im Git.
