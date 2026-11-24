@@ -385,3 +385,49 @@ Der Satz „Ein zweiter Lauf hat beide CSV-Dateien Byte für Byte gleich erzeugt
 **Woran ich es bemerkt habe:** Im ersten Lauf des vorläufigen Skripts traf die SPEC-Formel 12 der 13 damals eingegebenen Zeilen auf höchstens 0,08 Prozentpunkte. Diese Zeile lag dagegen 7,26 Prozentpunkte daneben, die beiden anderen Lesarten 7,26 und 8,06. Dabei fiel auf, dass der eingegebene Prozentwert genau der veröffentlichten oberen Grenze glich. Ich habe dann die gerenderte Seite 9 der Quelle erneut angesehen. Dort lautet die Zeile „Non-Hispanic black … 195 242.2 34.9 3.06 8.8 28.3 42.1 13.8 39.5 12“. Am 24.11.2026 noch einmal im Text des PDF (`pdftotext -layout`) nachgesehen: dieselbe Zeile, Prozentwert 34.9. Anlass für das Nachsehen war also die Abweichung im eigenen Ergebnis. Grundlage der Korrektur ist allein die Quelle.
 
 **Weitere Änderung an A/02 nach dessen erstem Lauf:** Ich habe die Prüfung ergänzt, ob die Abweichungen durch die Rundung der Eingaben erklärbar sind. Dazu kamen die Funktion `erklaerbar` und die Spalte `durch_rundung_erklaerbar` in `results/A/abend2_ki_formel_pruefung.csv` hinzu. Die übrigen Werte blieben gleich. Die Konsolenausgabe beider Läufe nennt dieselben größten Abweichungen (0,085, 2,326 und 1,053 Prozentpunkte). Committet ist der zweite Lauf (Commit `65048fa`).
+
+## 2026-11-24 – Abend 3: Zweitauswertung durch B und Vergleich
+
+Gerechnet von der Vergleichssitzung (Claude Code, nicht Auswerter A), Branch `abend-3` von `main` (Stand `d37f556`).
+
+### Prüflauf `A/01_download.R`
+
+Alle vier Dateien frisch geladen. Alle vier SHA-256-Prüfsummen stimmen mit `results/A/abend1_dateien.csv` überein, alle vier Zeilenzahlen mit SPEC.md. Kein Abbruch. Am Skript ist nichts geändert.
+
+### Skript von Auswerter B
+
+- `B/positivkontrolle.py`, geschrieben von Gemini 4 Neon, übergeben von Justus im Auftrag für Abend 3. Unverändert abgelegt und vor dem ersten Lauf einzeln committet (`c565808`).
+- 534 Zeilen, SHA-256 `2da4f20041d573b61a26f96fb220593b69bbba8f50a9d5916401a4aac769141a`. Die Datei endet mit genau einem Zeilenumbruch nach der letzten Zeile. Ob die Vorlage einen hatte, lässt der Auftragstext nicht erkennen.
+- Umgebung: Python 3.13.18, pandas 3.0.5, numpy 2.5.3. Nichts installiert. scipy ist vorhanden, lässt sich aber nicht importieren (für numpy < 1.28 gebaut). B importiert scipy nicht, der Lauf ist davon nicht betroffen.
+- Lauf mit `python3 B/positivkontrolle.py` aus dem Wurzelverzeichnis: kein Abbruch. Ausgabe `results/B/abend2_positivkontrolle.csv`, 27 Zeilen. Prüfsumme des Skripts nach dem Lauf unverändert. Ein zweiter Lauf erzeugt die CSV Byte für Byte gleich (SHA-256 `0f80fae83bda82ae46cde19b8ae26d0b2b000aa60c57b3888944687585e5b461`).
+- Konsolenausgabe von B, wörtlich:
+
+```text
+[Hinweis] P_DEMO.xpt: 574 SAS-XPT-Nullartefakte (|x| < 1e-50) in Spalte 'RIDAGEYR' auf 0.0 gesetzt.
+[Hinweis] P_DEMO.xpt: 1260 SAS-XPT-Nullartefakte (|x| < 1e-50) in Spalte 'WTMECPRP' auf 0.0 gesetzt.
+Designbasis: 14300 Personen, 24 Strata, 49 Cluster.
+```
+
+  Die zwei Hinweise betreffen Werte, die `pandas.read_sas` als winzige Zahl statt als 0 liest. 1.260 ist genau die Zahl der nicht untersuchten Personen (15.560 − 14.300), deren Gewicht 0 ist. 574 Werte betreffen das Alter 0 (unter einem Jahr). Weder Alter 0 noch Gewicht 0 gehört zur Analysegruppe (Alter ab 20, Gewicht > 0). Einfluss auf das Ergebnis: keiner. Designbasis, Strata und Cluster gleich wie bei A.
+
+### `vergleich.py`
+
+Neu, im Wurzelverzeichnis, nur Python-Standardbibliothek. Liest `SPEC.md`, `results/A/abend2_positivkontrolle.csv` und `results/B/abend2_positivkontrolle.csv` und schreibt `results/vergleich_abend2.csv`. Festlegungen:
+
+- **Zeilen:** die 27 Zeilen, die B rechnet (Stufen 1, 2 und 4). Stufe 3 rechnet laut SPEC.md nur A. Ihr Urteil steht in der Datei von A. Für B gäbe es dort kein Urteil aus den drei zulässigen Werten.
+- **Zuordnung:** eine sichtbare Tabelle `ZUORDNUNG_TEXT` mit 27 Zeilen im Skript. B schreibt `methode` = `ungewichtet` / `roh` / `altersadjustiert` und eine Spalte `einheit`, A schreibt `art` = leer / `roh` / `adjustiert`. Kennzahl, Gruppe und Größe heißen bei beiden gleich. Das Skript bricht ab, wenn eine Zeile von B oder eine Zeile von A der Stufen 1, 2, 4 nicht in der Tabelle steht, eine Bezeichnung nicht genau einmal vorkommt, die Stufe abweicht oder die Einheit von B nicht stimmt. Kein Abbruch.
+- **Zielwerte und Toleranzen:** aus SPEC.md gelesen (Satz „Erwartet werden …“, Zieltabelle, Satz zu den zwei Standardfehlern, Tabellen „Toleranz, vorab festgelegt“ und „Übereinstimmung A gegen B“), nicht abgetippt. Gegenprobe: Die Spalte `zielwert` in der Datei von A muss gleich sein, ebenso das Urteil „A gegen Ziel“. Beides stimmt in allen 27 Zeilen. Gelesene Toleranzen: gegen Ziel 0 / 0,1 / 0,1, A gegen B 0 / 0,01 / 0,01 (Fallzahl / Prävalenz / Standardfehler). Unverändert.
+- **Urteil:** Abweichung ungerundet, bestanden bei |Abweichung| ≤ Toleranz. Fallzahlen als ganze Zahlen exakt. Wie in `A/04_zielvergleich.R` wird |Abweichung| vorher auf 10 Nachkommastellen gerundet. Zusätzlich prüft das Skript, dass das Urteil ohne diese Rundung gleich ausfällt, sonst bricht es ab. Kein Grenzfall aufgetreten.
+- An `vergleich.py` ist nach dem ersten Lauf nichts geändert. Ein zweiter Lauf erzeugt `results/vergleich_abend2.csv` Byte für Byte gleich.
+
+SHA-256 der Eingaben beim Lauf: SPEC.md `2727ca9e15ceee64c3a8d4043f80be305bccb8d50ffdcd5f693e5ecb12d623cb`, `results/A/abend2_positivkontrolle.csv` `03925b3af59525105ad70f4a18c5310d2451dab8222a1bd108afd265bee88abd`.
+
+### Ergebnis: Abend 3 bestanden
+
+- **B gegen Ziel:** 17 von 17 extern geprüften Zellen der Stufen 1, 2 und 4 bestanden (3 Fallzahlen, 12 Prävalenzen, 2 Standardfehler). Die übrigen 10 Zeilen (Standardfehler) sind `extern nicht geprüft`.
+- **A gegen Ziel:** dieselben 17 von 17 bestanden, wie in Abend 2.
+- **A gegen B:** 27 von 27 bestanden. Die Fallzahlen sind gleich. Die größte Differenz bei Prävalenzen und Standardfehlern beträgt 7,1 · 10⁻¹⁵ Prozentpunkte (Adipositas, Frauen, roh und adjustiert), also Rechenrauschen der Gleitkommazahlen. In 14 der 24 gewichteten Zeilen sind die Werte bitgleich.
+
+A (R, `survey`) und B (Python, Varianz von Hand) liefern damit auf getrennten Wegen dieselben Schätzer und Standardfehler. Das bestätigt die Programmierung, nicht die Spezifikation selbst (SPEC.md, Definition 6).
+
+**Stand des Pilots:** Abende 1, 2 und 3 bestanden. Abend 4 steht aus.
