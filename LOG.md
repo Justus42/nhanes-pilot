@@ -913,3 +913,28 @@ ALLOPURINOL 65, SPIRONOLACTONE 32. Nicht erreicht: PREGABALIN 16, SITAGLIPTIN 25
 Ergebnis: G3.
 Bekannte Lücke: Cockcroft-Gault ist nicht am Volltext der Originalarbeit geprüft (OFFEN.md, Frage 4).
 Nächster Schritt: ein einseitiges, öffentlich registriertes Protokoll vor jeder Hauptanalyse.
+
+## 2026-11-24 – Abschlussvermerk: G3 wird nicht weiterverfolgt
+
+**Entscheidung von Justus am 24.11.2026, 13:19 Uhr:** Das Projekt G3 „Nierenformeln und Dosierungskategorien“ endet vor der Registrierung eines Protokolls. Den Vermerk hat der Orchestrator (Claude) in seinem Auftrag geschrieben.
+
+**Das Ergebnis des Pilots bleibt bestehen.** Der Pilot ist bestanden, und die Entscheidungsregel ergab G3 (Eintrag „Entscheidung nach dem Pilot“). SPEC.md, Zielwerte, Toleranzen, Abbruchkriterium und Entscheidungsregel sind unverändert. Das Ende von G3 ist kein Scheitern nach der Spezifikation. Die Regel beantwortet nur, ob genug Fälle vorhanden sind. Ob sich die Hauptanalyse lohnt, regelt sie nicht. Das ist eine eigene Entscheidung über Aufwand und Nutzen.
+
+**Gründe:**
+
+1. **Die Frage ist in wesentlichen Teilen schon beantwortet.** Lyu et al., Am J Kidney Dis 2023 (doi:10.1053/j.ajkd.2023.01.453) vergleichen in einer Klinikkohorte mit Vorhofflimmern für Rivaroxaban alle drei Formelpaare, die G3 vergleichen wollte, getrennt nach BMI und Alter. Schwartz, J Am Geriatr Soc 2016 (doi:10.1111/jgs.14288) rechnet mit NHANES 2011/12 und den älteren Gleichungen für die DOAK. Den Volltext von Lyu et al. hat der Orchestrator gelesen, Schwartz mindestens anhand der PubMed-Angaben geprüft.
+2. **Der verbleibende neue Teil ist klein.** Neu wäre nur die bevölkerungsrepräsentative Größenordnung mit der Gleichung von 2021 für den empfohlenen Wechsel von Cockcroft-Gault zur eGFR (St Peter et al., Am J Health Syst Pharm 2025, doi:10.1093/ajhp/zxae317).
+3. **Die Methode gewinnt wenig.** Für G3 gibt es keinen veröffentlichten Zielwert, also keine Positivkontrolle wie an den Abenden 2 und 3. Die Aufgabenart ist dieselbe wie im Pilot.
+4. **Zweck laut Justus (24.11.2026):** Das Projekt soll zeigen, ob man überwiegend mit KI einen kleinen, nützlichen Beitrag leisten kann. Der Wert liegt für ihn mehr in der KI-Methodik als in diesem Ergebnis.
+5. **Einschätzungen:** Der Orchestrator, Gemini (von Justus weitergeleitet) und GPT 6.2 Astra (über die Bridge) raten, G3 vor der Registrierung zu beenden. Diese Texte liegen nicht im Repo und sind hier nicht belegt.
+
+**Stand bei Abschluss:**
+
+- Letzter Commit auf `main` vor diesem Vermerk: `453ef33` (Merge von Pull Request 7). Seither sind keine Skripte und keine Ergebnisse dazugekommen oder geändert worden.
+- Nach dem Pilot wurde nichts mehr ausgewertet. Die Verteilung der Indikationsangaben je Wirkstoff hat niemand angesehen. Das ist eine Angabe des Orchestrators. Aus dem Repo folgt nur der erste Punkt.
+- Ein Protokollentwurf 0.1 liegt außerhalb des Repos. Er ist nicht registriert und wird nicht weitergeführt. Er enthält einen bekannten Fehler: Er behauptet, NHANES enthalte keine Angabe zur Indikation. Die gespeicherte CDC-Seite `docs/cdc/P_RXQ_RX_2026-11-23.htm` nennt aber die Variablen `RXDRSC1` bis `RXDRSC3` und `RXDRSD1` bis `RXDRSD3`. Die Schwellenwerte in seinem Anhang stammen aus Suchausschnitten und sind nicht an den Fachinformationen geprüft.
+- Die bekannte Lücke bleibt offen: Cockcroft-Gault ist nicht am Volltext der Originalarbeit geprüft (OFFEN.md, Frage 4). Sie wird nicht mehr geschlossen.
+
+**Was bleibt:** Dieses Repo bleibt als Beleg des Pilots unverändert stehen. Geplant, aber noch nicht beauftragt, ist eine kurze offene Notiz zum Pilot (welcher Fehler durch welche Absicherung bemerkt wurde, Zeitaufwand). Die Wahl eines nächsten Projekts geschieht außerhalb dieses Repos.
+
+**Falls G3 später wieder aufgenommen wird:** Zuerst entsteht ein einseitiges, öffentlich registriertes Protokoll. Vorher wird nichts ausgewertet.
