@@ -903,3 +903,13 @@ Geschrieben: results/vergleich_abend4.csv (16 Zeilen)
 - Bekannte Lücke unverändert: Die Cockcroft-Gault-Formel ist nicht am Volltext der Originalarbeit geprüft. Davon hängen `n_cg_u60`, `n_irgendeine_u60`, die zwei Diskordanz-Spalten und `kat_cg` ab. Die Prüfung wird vor der Hauptanalyse nachgeholt.
 - Die Entscheidungsregel ist nicht angewendet. Das entscheidet Justus.
 - `data/work/abend4_personen_A.csv` und `abend4_personen_B.csv` liegen laut `.gitignore` nicht im Git.
+
+## 2026-11-24 – Entscheidung nach dem Pilot
+
+Die Entscheidungsregel aus SPEC.md hat der Orchestrator angewendet, Justus hat entschieden.
+Pilot bestanden: Alle vier Punkte der Prüfliste in SPEC.md sind erfüllt (Pull Requests 2, 4, 5, 6 und 7).
+n_irgendeine_u60 erreicht in 5 der 7 Zeilen den Wert 30: METFORMIN 126, GABAPENTIN 85, DOAK_GESAMT 57,
+ALLOPURINOL 65, SPIRONOLACTONE 32. Nicht erreicht: PREGABALIN 16, SITAGLIPTIN 25. A und B sind identisch.
+Ergebnis: G3.
+Bekannte Lücke: Cockcroft-Gault ist nicht am Volltext der Originalarbeit geprüft (OFFEN.md, Frage 4).
+Nächster Schritt: ein einseitiges, öffentlich registriertes Protokoll vor jeder Hauptanalyse.
