@@ -665,3 +665,25 @@ Versucht am 24.11.2026:
 ### Folge
 
 Nach der Vorgabe von Justus gilt: Bleibt ein Original unerreichbar, wird angehalten und nicht gezählt. Frage 4 in `OFFEN.md` bleibt offen. Phase 2 hat nicht begonnen. Kein Skript ist geändert, nichts ist gezählt.
+
+## 2026-11-24 – Abend 4, Phase 1: DuBois am Seitenbild geprüft (Zenodo)
+
+Justus hat `zenodo.org` freigegeben. Am 24.11.2026 um 06:07 UTC ist `zenodo.org` erreichbar (HTTP 200).
+
+**Quelle:** Zenodo-Eintrag 1423319 (`https://zenodo.org/records/1423319`), laut API: Titel „Clinical Calorimetry: Tenth Paper a Formula to Estimate the Approximate Surface Area if Height and Weight Be Known“, Datum 1916-06-01, DOI 10.1001/archinte.1916.00080130010002, Lizenz `cc-zero`. Datei `article.pdf`, 1.017.854 Bytes, 9 Seiten. MD5 `dbdc38f50b63153c67dad5900cfa205c`, gleich der Prüfsumme in der API. SHA-256 `2ee8b596cf23ee09e3ace524700747e544444a991073274636cc90306f8a1ba9`. Die Fußzeile jeder Seite lautet „Downloaded From: http://archinte.jamanetwork.com/ by a University of Arizona Health Sciences Library User on 08/31/2013“. Es ist also der Scan des Verlags.
+
+Die PDF-Seiten 8 und 9 (Heftseiten 870 und 871) hat A mit `pdftoppm` als Bild gerendert und vom Bild abgelesen.
+
+Seite 870, wörtlich nach dem Seitenbild (Hochzahlen mit ^):
+
+> The best values of "a" and "b" were found to be a = 2.35 and b = 1.38 giving the formula the final form of A = W^1/2.35 × H^1/1.38 × C or A = W^0.425 × H^0.725 × 71.84. This formula can be solved by logarithms as follows:
+> Log. A = Log. W × 0.425 + Log. H × 0.725 + 1.8564.
+> 1.8564 is a constant equal to Log. C.
+
+Seite 871, „Summary and Conclusions“, wörtlich nach dem Seitenbild:
+
+> This is expressed in the terms A = W^0.425 × H^0.725 × C. A being the surface area in square centimeters, H the height in centimeters, W the weight in kilograms and C the constant, 71.84.
+
+Das Seitenbild bestätigt die Lesung aus dem vorigen Eintrag. Die Einschränkung „nur OCR-Text, nicht das Seitenbild“ ist damit erledigt. **Ergebnis unverändert: Die DuBois-Formel in SPEC.md stimmt mit dem Original überein** (W^0,425 · H^0,725 · 71,84 cm² = 0,007184 · W^0,425 · H^0,725 m², W in kg, H in cm).
+
+**Cockcroft-Gault:** Der Zenodo-Eintrag enthält nur die Arbeit von DuBois. Das Original von Cockcroft und Gault bleibt unerreichbar (siehe voriger Eintrag). Frage 4 bleibt offen. Nichts gezählt.

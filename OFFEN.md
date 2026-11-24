@@ -44,7 +44,7 @@ Jede Frage mit Datum, Anlass und Beleg. Entscheidung durch Justus; Auswerter A �
 
 **Frage:** Darf A mit diesen zwei Formeln zählen, obwohl sie nicht gegen das Original geprüft sind? Oder sollen erst die Hosts in der Umgebung freigegeben oder die Originale (PDF) ins Repo gelegt werden? Das Karger-PDF ist vermutlich kostenpflichtig, die Arbeit von 1916 gemeinfrei.
 
-**Status:** teilweise geklärt am 24.11.2026. Justus hat die gesperrten Domains freigegeben. DuBois ist gegen das Original geprüft und stimmt mit SPEC.md überein (`LOG.md`). Das Original von Cockcroft und Gault bleibt unerreichbar: karger.com antwortet mit einer Cloudflare-Prüfung statt des Artikels. **Weiterhin offen, Zählen angehalten.**
+**Status:** teilweise geklärt am 24.11.2026. Justus hat die gesperrten Domains freigegeben. DuBois ist gegen das Original geprüft und stimmt mit SPEC.md überein, abgelesen vom Seitenbild des Verlagsscans auf Zenodo (`LOG.md`). Das Original von Cockcroft und Gault bleibt unerreichbar: karger.com antwortet mit einer Cloudflare-Prüfung statt des Artikels. **Weiterhin offen, Zählen angehalten.**
 
 ## 5. Bezeichnerspalte und Reihenfolge der Ausgabedateien von Abend 4 (24.11.2026, Auswerter A)
 
