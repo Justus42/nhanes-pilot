@@ -431,3 +431,121 @@ SHA-256 der Eingaben beim Lauf: SPEC.md `2727ca9e15ceee64c3a8d4043f80be305bccb8d
 A (R, `survey`) und B (Python, Varianz von Hand) liefern damit auf getrennten Wegen dieselben Schätzer und Standardfehler. Das bestätigt die Programmierung, nicht die Spezifikation selbst (SPEC.md, Definition 6).
 
 **Stand des Pilots:** Abende 1, 2 und 3 bestanden. Abend 4 steht aus.
+
+## 2026-11-24 – Abend 4, Phase 1 (vor dem Zählen)
+
+Auswerter A, Branch `abend-4` von `main` (Stand `e8d253c`, nach Abend 3). Gezählt ist noch nichts. Keine Datei von B, `results/B/`, `vergleich.py` oder `results/vergleich_abend2.csv` ist geöffnet worden.
+
+### 1. Prüflauf `A/01_download.R`
+
+Gestartet am 24.11.2026, 05:50 UTC. Alle vier Dateien wurden frisch geladen. Alle vier SHA-256-Prüfsummen stimmen mit `results/A/abend1_dateien.csv` überein, alle vier Zeilenzahlen stimmen mit SPEC.md. Kein Abbruch. Am Skript ist nichts geändert. R 4.3.3, von A nichts installiert.
+
+### 2. Kreatinin zwischen den Geräten (P\_BIOPRO)
+
+Gelesen: `docs/cdc/P_BIOPRO_2026-11-23.htm`, SHA-256 `ec7c2a15c1a114f907cc61f003b4c1218e625c4cbce2eadfa1e974d3bf4e38b5`, gleich der Prüfsumme aus Abend 1. Kopf der Seite: „Standard Biochemistry Profile (P_BIOPRO) … First Published: August 2021 Last Revised: NA“.
+
+**Ergebnis: Die CDC schreibt für `LBXSCR` innerhalb des Zyklus 2017–März 2020 keine Umrechnung zwischen Geräten vor.** Laut der Seite ist der ganze Zyklus auf einem Gerät gemessen. Die Umrechnungsgleichungen gelten nur für den Vergleich mit den Zyklen bis 2015–2016. `LBXSCR` wird unverändert verwendet. Damit ist auch Punkt 4 der offenen Punkte in SPEC.md beantwortet: Die Gleichung der Dokumentation betrifft den Wechsel zwischen den Zyklen, nicht die kombinierte Datei.
+
+Wörtlich, Abschnitt „Description of Laboratory Methodology“:
+
+> All methods were measured on the Roche Cobas 6000 (c501 module) analyzer.
+
+Wörtlich, Abschnitt „Analytic Notes“, Überschrift „Standard Biochemistry Profile regression equations to compare 2017-March 2020 and 2015-2016 data“:
+
+> Method validation (bridging) studies were performed to compare results from a laboratory, instrument, and method change between the 2015-2016 and 2017-2018 survey cycles using NHANES samples from late 2016. During the 2015-2016 cycle the Beckman Coulter UniCel DxC 800 Synchron was upgraded to the Beckman Coulter UniCel DxC 660i Synchron Access chemistry analyzer (DxC 660i). Previous analyses indicated that no statistical adjustment is needed for results obtained between the two Beckman UniCel® analyzers (i.e., DxC 800 and DxC 660i). During the 2017-2018 cycle the Roche Cobas 6000 chemistry analyzer (Cobas 6000) was used for the entire 2017-2018 cycle. Analyses comparing results obtained from the Cobas 6000 to those obtained from the DxC 660i using selected serum samples (n=248) from NHANES participants in 2016 indicate that adjustments are needed for some analytes as described below.
+
+> It is recommended that these equations be used when examining trends among standard biochemistry profile data across 1999-2016 and 2017-2018 cycles, or when combining 2017-2018 data with previous cycles.
+
+Zeile `LBXSCR` der Tabelle, wörtlich:
+
+> LBXSCR (mg/dL) | Non-weighted Deming | X (Cobas 6000) = 0.9515 [95% CI: 0.9365 to 0.9665] * Y (DxC 660i) + 0.06608 [95% CI: 0.05252 to 0.07963] | X (DxC 660i) = 1.051 [95%CI: 1.034 to 1.068] * Y (Cobas 6000) - 0.06945 [95%CI: -0.08474 to -0.05415] | 3.354 | 0.993
+
+Einschränkung: Der Satz zu den Bridging-Studien nennt ausdrücklich nur 2017–2018. Für 2019–März 2020 stützt sich das Ergebnis auf den Satz „All methods were measured on the Roche Cobas 6000 (c501 module) analyzer“ in der Dokumentation der kombinierten Datei. Die Seite listet die Methodendokumente zu Kreatinin in zwei Fassungen („February 2020“ und „August 2021“). Diese Dokumente sind nicht gesichert und nicht gelesen.
+
+Codebuch `LBXSCR`, wörtlich: „0.25 to 14.97 | Range of Values | 9475“, „. | Missing | 934 | 10409“. Untere Nachweisgrenze laut Analytic Notes: 0.10 mg/dL. Kein Wert liegt laut Codebuch darunter.
+
+### 3. Formeln gegen die Originalarbeiten
+
+**CKD-EPI 2021: geprüft, stimmt.**
+
+Quelle: Inker LA, Eneanya ND, Coresh J, et al. New Creatinine- and Cystatin C–Based Equations to Estimate GFR without Race. N Engl J Med 2021;385:1737–1749. doi:[10.1056/NEJMoa2102953](https://doi.org/10.1056/NEJMoa2102953), PMID 34554658. Gelesen am 24.11.2026 über PubMed Central (PMC8822996). Das ist das Autorenmanuskript in PMC, nicht der gesetzte Text des NEJM.
+
+Tabelle 2, Zeile „2021 CKD-EPI creatinine (2009 CKD-EPI creatinine fit without race); eGFRcr(AS), new“, wörtlich:
+
+> 142 (139 to 144) | F: −0.241 (−0.344 to −0.138); M: −0.302 (−0.403 to −0.202) | −1.200 (−1.211 to −1.189) | — | — | 0.9938 (0.9935 to 0.9942) | 1.012 (1.000 to 1.023) | —
+
+Fußnote zu Tabelle 2, wörtlich:
+
+> The cells show coefficients to use in the following formula: eGFR=μ×min(Scr/k,1)^a_1_^×max(Scr/k,1)^a_2_^×min(Scys/0.8,1)^b_1_^×max(Scys/0.8,1)^b_2_^×c^Age^×d[if female]×e[if Black]. Here, κ is 0.7 for female participants and 0.9 for male participants, min indicates the minimum of Scr/κ and 1, and max indicates the maximum of Scr/κ and 1.
+
+> The coefficient a_1_ is used for levels of creatinine less than or equal to 0.9 mg per deciliter for male participants and 0.7 mg per deciliter for female participants. The coefficient a_2_ is used for levels of creatinine greater than 0.9 mg per deciliter for male participants and 0.7 mg per deciliter for female participants.
+
+| SPEC.md | Originalarbeit, Tabelle 2 | Urteil |
+| --- | --- | --- |
+| 142 | μ = 142 | gleich |
+| min(Krea/k, 1)^a, Frauen a = −0,241, Männer a = −0,302 | a₁: F −0.241, M −0.302 | gleich |
+| max(Krea/k, 1)^(−1,200) | a₂ = −1.200 | gleich |
+| k = 0,7 Frauen, 0,9 Männer | κ = 0.7 female, 0.9 male | gleich |
+| 0,9938^Alter | c = 0.9938 | gleich |
+| bei Frauen mal 1,012 | d = 1.012 | gleich |
+| kein Faktor für Rasse | e: „—“ | gleich |
+
+Die Arbeit nennt Kreatinin in mg/dL („mg per deciliter“) und Ergebnisse in ml/min/1,73 m². Die Studienteilnehmer waren laut Methodenteil „18 years of age or older“, passend zur Analysegruppe ab 18.
+
+**Körperoberfläche nach DuBois: nicht gegen das Original geprüft.**
+
+Quelle: Du Bois D, Du Bois EF. A formula to estimate the approximate surface area if height and weight be known. Arch Intern Med 1916;17:863–871; Nachdruck Nutrition 1989;5:303–311 (PMID 2520314). PubMed führt nur den Nachdruck, ohne Abstract und ohne Volltext in PMC. Die Verlagsseite (`jamanetwork.com`), `doi.org` und `archive.org` sind aus dieser Cloud-Sitzung gesperrt: `CONNECT tunnel failed, response 403` vom Proxy; ein zweiter Versuch über das Abrufwerkzeug scheiterte an der Namensauflösung. **Die Formel der Spezifikation ist hier nicht belegt.**
+
+**Cockcroft-Gault: nicht gegen das Original geprüft.**
+
+Quelle: Cockcroft DW, Gault MH. Prediction of creatinine clearance from serum creatinine. Nephron 1976;16:31–41. doi:[10.1159/000180580](https://doi.org/10.1159/000180580), PMID 1244564. Kein Volltext in PMC. `karger.com` und `doi.org` sind gesperrt, wie oben. Gelesen ist nur das Abstract in PubMed, wörtlich:
+
+> A formula has been developed to predict creatinine clearance (Ccr) from serum creatinine (Scr) in adult males: (see article)(15% less in females). Derivation included the relationship found between age and 24-hour creatinine excretion/kg in 249 patients aged 18-92.
+
+Damit ist nur der Faktor 0,85 bei Frauen belegt („15% less in females“). Der Aufbau der Formel ((140 − Alter) · Gewicht / (72 · Kreatinin)) ist hier nicht belegt.
+
+**De-Indexierung** (indexierter Wert · Körperoberfläche / 1,73) ist eine Umrechnung der Einheit und stammt aus keiner der drei Arbeiten.
+
+Aus dem Gedächtnis ist keine Formel geprüft. Die Erwartungswerte der Rechentests hat die Spezifikation aus ihren eigenen Formeln berechnet (offener Punkt 7). Die Tests zeigen also, dass der Code die Formeln der Spezifikation umsetzt. Ob diese Formeln den Originalen entsprechen, zeigen sie nicht. Die Frage, ob trotzdem gezählt wird, steht als Frage 4 in `OFFEN.md`.
+
+### 4. Funktionen und Rechentests
+
+**Skripte, neu:**
+
+- `A/05_formeln.R`: nur Funktionen, liest keine Daten. `ckd_epi_2021`, `kof_dubois`, `ckd_epi_deindex`, `cockcroft_gault`, `kategorie` und `name_trifft` (Namensabgleich für `RXDDRUG` nach SPEC.md). Jede Funktion bricht bei fehlender, nicht endlicher oder nicht positiver Eingabe ab, beim Geschlecht bei einem anderen Wert als 1 oder 2. Vor dem ersten Lauf ergänzt: In `name_trifft` wird ein fehlender Name vor der Zerlegung durch einen leeren Text ersetzt. Er ergibt ohnehin keinen Treffer.
+- `A/06_rechentests.R`: die neun Rechentests aus SPEC.md mit den Erwartungswerten und Toleranzen der Spezifikation (0,01, bei der Körperoberfläche 0,0001 m²), dazu neun eigene Zusatzprüfungen von A zu Kategoriegrenzen und Namensabgleich. Die Zusatzprüfungen sind kein Kriterium der Spezifikation. Bricht ab, wenn ein Test nicht besteht. Schreibt `results/A/abend4_rechentests.csv`.
+
+**Ergebnis des ersten Laufs: alle 9 Rechentests der Spezifikation und alle 9 Zusatzprüfungen bestanden.** Die Werte stammen aus `results/A/abend4_rechentests.csv`, auf sechs Stellen gerundet:
+
+| Fall | Erwartet | Berechnet | Abweichung | Toleranz |
+| --- | --- | --- | --- | --- |
+| Mann, 60 J., 72 kg, Krea 1,0: Cockcroft-Gault | 80,00 | 80,000000 | 0,000000 | 0,01 |
+| Frau, 60 J., 72 kg, Krea 1,0: Cockcroft-Gault | 68,00 | 68,000000 | 0,000000 | 0,01 |
+| Mann, 60 J., Krea 0,9: CKD-EPI indexiert | 97,78 | 97,775014 | −0,004986 | 0,01 |
+| Frau, 60 J., Krea 0,7: CKD-EPI indexiert | 98,95 | 98,948315 | −0,001685 | 0,01 |
+| Mann, 60 J., Krea 1,8: CKD-EPI indexiert | 42,56 | 42,559047 | −0,000953 | 0,01 |
+| Mann, 60 J., Krea 0,45: CKD-EPI indexiert | 120,54 | 120,542154 | 0,002154 | 0,01 |
+| Frau, 60 J., Krea 0,35: CKD-EPI indexiert | 116,94 | 116,938261 | −0,001739 | 0,01 |
+| 72 kg, 175 cm: Körperoberfläche | 1,8704 | 1,870403 | 0,000003 | 0,0001 |
+| Mann, 60 J., 72 kg, 175 cm, Krea 1,8: CKD-EPI de-indexiert | 46,01 | 46,013049 | 0,003049 | 0,01 |
+
+Alle Abweichungen sind kleiner als 0,005 (Körperoberfläche: kleiner als 0,00005). Das passt zur Rundung der Erwartungswerte auf zwei beziehungsweise vier Nachkommastellen. Die Konsole zeigt Umlaute als Oktalfolgen, weil die Sitzung ohne `LANG` läuft. Die CSV-Datei ist UTF-8.
+
+SHA-256 beim Lauf: `A/05_formeln.R` `f0645e738f4bc4a111f3a9ee863d16b472cd7e3e405c54876574477b7e921172`, `A/06_rechentests.R` `5ac912fbb4e9f1f507aed15b4a5768f3aa5542cbe9ad5a6a5699e8eeb5a995b4`, `results/A/abend4_rechentests.csv` `78a3bc2896d2d5275297730f52acbaf1f2bb7fb34306793c69123b10a57b8547`.
+
+### 5. Abschnitt „Abend 4“ erneut gelesen: Fragen vor dem Zählen
+
+Gegen die gesicherten Seiten zu P\_RXQ\_RX, P\_BMX und P\_BIOPRO gelesen. Vier Fragen stehen in `OFFEN.md`:
+
+- Frage 4: Cockcroft-Gault und DuBois nicht gegen das Original geprüft. **Vor dem Zählen zu entscheiden.**
+- Frage 5: Name der Bezeichnerspalte und Reihenfolge in beiden Ausgabedateien. Nicht blockierend.
+- Frage 6: „Ein Gewichtskriterium gibt es hier nicht“ meint nach Lesart von A das Stichprobengewicht. Ohne Wirkung auf die Analysegruppe. Nicht blockierend.
+- Frage 7: Die Rückführbarkeit des Kreatinins auf IDMS ist in der Dokumentation nicht belegt. Nicht blockierend.
+
+**Stellen ohne Widerspruch zur Spezifikation**, wörtlich aus der Dokumentation:
+
+- P\_RXQ\_RX, RXDUSE: „In the past 30 days, have you used or taken medication for which a prescription is needed?“ Codes „1 | Yes | 24246“, „2 | No | 8701“, „7 | Refused | 7“, „9 | Don't know | 8“. Das passt zu „berichtete Einnahme im letzten Monat“.
+- P\_RXQ\_RX, RXDDRUG: „For multi-ingredient products, the ingredients were listed in alphabetical order (i.e., Acetaminophen; Codeine).“ Codes „55555 | Unknown | 20“, „77777 | Refused | 46“, „99999 | Don't know | 156“, „< blank > | Missing | 8716“. 24.024 Zeilen mit Namen plus 20 + 46 + 156 ergeben genau die 24.246 Zeilen mit `RXDUSE = 1`.
+- P\_RXQ\_RX: „Respondent sequence number (SEQN) in the prescription medication data is not a unique identifier. […] Analysts should convert a drug-level data to a person-level data […] before merging“. Das deckt sich mit SPEC.md.
+- P\_BMX: „RIDEXPRG for several pregnant women who were outside of this age range are not reported due to disclosure concerns. The body measures data for these participants are also not reported.“ Schwangere außerhalb von 20–44 Jahren haben also kein `BMXWT` und kein `BMXHT`. Sie fallen über die Bedingung „vorhanden“ ohnehin aus der Analysegruppe. Kein Widerspruch zu Definition 1.
+- P\_BMX: „The body weight data for participants who had limb amputations were set to “missing.”“ Diese Personen fallen ebenfalls aus der Analysegruppe. Das ist eine Folge der Spezifikation, kein Widerspruch.
