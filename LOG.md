@@ -687,3 +687,15 @@ Seite 871, „Summary and Conclusions“, wörtlich nach dem Seitenbild:
 Das Seitenbild bestätigt die Lesung aus dem vorigen Eintrag. Die Einschränkung „nur OCR-Text, nicht das Seitenbild“ ist damit erledigt. **Ergebnis unverändert: Die DuBois-Formel in SPEC.md stimmt mit dem Original überein** (W^0,425 · H^0,725 · 71,84 cm² = 0,007184 · W^0,425 · H^0,725 m², W in kg, H in cm).
 
 **Cockcroft-Gault:** Der Zenodo-Eintrag enthält nur die Arbeit von DuBois. Das Original von Cockcroft und Gault bleibt unerreichbar (siehe voriger Eintrag). Frage 4 bleibt offen. Nichts gezählt.
+
+## 2026-11-24 – Abend 4: Frage 4 entschieden, bekannte Lücke Cockcroft-Gault
+
+**Entscheidung von Justus am 24.11.2026**, wörtlich als Status in `OFFEN.md`, Frage 4:
+
+> A zählt mit der Cockcroft-Gault-Formel aus SPEC.md, obwohl der Volltext der Originalarbeit nicht geprüft ist. Belegt sind über das Abstract der Originalarbeit (PubMed und Verlagsseite karger.com/nef/article-abstract/16/1/31/212046, vom Orchestrator gelesen): 140 minus Alter, Gewicht in kg, die Konstante 72, Kreatinin in mg/100 ml und 15 % weniger bei Frauen. Dass 72 mal Kreatinin im Nenner steht, zeigt die einzeilige Schreibweise des Abstracts nicht eindeutig. Die Prüfung am Volltext wird vor der Hauptanalyse nachgeholt.
+
+**Bekannte Lücke:** Die Cockcroft-Gault-Formel ist nicht am Volltext der Originalarbeit geprüft. Die Belege aus der Verlagsseite hat der Orchestrator gelesen, nicht Auswerter A. A hat nur das PubMed-Abstract gelesen. Dort steht die Formel als „(see article)“, belegt ist nur „15% less in females“. Offen ist vor allem, ob 72 · Kreatinin im Nenner steht. Die Prüfung am Volltext wird vor der Hauptanalyse nachgeholt. Davon betroffen sind die Spalten `n_cg_u60`, `n_irgendeine_u60`, `n_diskordant_cg_ckdepi` und `n_diskordant_cg_deindex` sowie die Spalte `kat_cg` der Personendatei.
+
+Stand der Formelprüfung damit: CKD-EPI 2021 und DuBois sind am Original geprüft und stimmen. Cockcroft-Gault ist nur teilweise über das Abstract belegt, siehe oben.
+
+Diese Entscheidung gilt als „weiter“ für Phase 2. Sie ist vor dem Zählen committet. Die Entscheidungsregel wendet A nicht an.

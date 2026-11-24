@@ -44,7 +44,7 @@ Jede Frage mit Datum, Anlass und Beleg. Entscheidung durch Justus; Auswerter A �
 
 **Frage:** Darf A mit diesen zwei Formeln zählen, obwohl sie nicht gegen das Original geprüft sind? Oder sollen erst die Hosts in der Umgebung freigegeben oder die Originale (PDF) ins Repo gelegt werden? Das Karger-PDF ist vermutlich kostenpflichtig, die Arbeit von 1916 gemeinfrei.
 
-**Status:** teilweise geklärt am 24.11.2026. Justus hat die gesperrten Domains freigegeben. DuBois ist gegen das Original geprüft und stimmt mit SPEC.md überein, abgelesen vom Seitenbild des Verlagsscans auf Zenodo (`LOG.md`). Das Original von Cockcroft und Gault bleibt unerreichbar: karger.com antwortet mit einer Cloudflare-Prüfung statt des Artikels. **Weiterhin offen, Zählen angehalten.**
+**Status:** beantwortet am 24.11.2026 durch Justus: A zählt mit der Cockcroft-Gault-Formel aus SPEC.md, obwohl der Volltext der Originalarbeit nicht geprüft ist. Belegt sind über das Abstract der Originalarbeit (PubMed und Verlagsseite karger.com/nef/article-abstract/16/1/31/212046, vom Orchestrator gelesen): 140 minus Alter, Gewicht in kg, die Konstante 72, Kreatinin in mg/100 ml und 15 % weniger bei Frauen. Dass 72 mal Kreatinin im Nenner steht, zeigt die einzeilige Schreibweise des Abstracts nicht eindeutig. Die Prüfung am Volltext wird vor der Hauptanalyse nachgeholt. DuBois ist gegen das Original geprüft und stimmt mit SPEC.md überein, abgelesen vom Seitenbild des Verlagsscans auf Zenodo (`LOG.md`).
 
 ## 5. Bezeichnerspalte und Reihenfolge der Ausgabedateien von Abend 4 (24.11.2026, Auswerter A)
 
