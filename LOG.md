@@ -594,3 +594,74 @@ Die Spezifikation legt Spaltenkopf und Reihenfolge nicht fest. Diese Festlegung 
 - Format sonst wie oben: Komma, keine Anführungszeichen, keine Zeilennamen, LF, ASCII. Die Datei liegt laut SPEC.md nicht im Git.
 
 Welche Zahlenformate B schreibt, legt die Spezifikation nicht fest, etwa `1.0` statt `1` oder `109263.0` statt `109263`. Ein Vergleich als Text würde das als Abweichung zählen. Das steht als Frage 8b in `OFFEN.md`.
+
+## 2026-11-24 – Abend 4, Phase 1: Antworten von Justus, zweiter Versuch an den Originalen
+
+### Antworten auf `OFFEN.md`
+
+Justus hat die Fragen 5, 6, 7, 8a und 8b am 24.11.2026 beantwortet. Die Antworten stehen als Status in `OFFEN.md`. SPEC.md bleibt unverändert. Die Lesart von A aus dem vorigen Eintrag gilt damit unverändert, einschließlich der Diskordanz-Spalten (8a).
+
+### Erreichbarkeit nach der Freigabe der Domains
+
+Justus hat die vier zuvor gesperrten Domains freigegeben. Geprüft am 24.11.2026 zwischen 06:04 und 06:06 UTC mit `curl`:
+
+| Host | Ergebnis |
+| --- | --- |
+| `doi.org` | erreichbar, leitet weiter (zu `karger.com` bzw. `archinte.jamanetwork.com`) |
+| `karger.com` | Proxy lässt durch. Die Website antwortet mit HTTP 403, `server: cloudflare`, `cf-mitigated: challenge`, Seitentext „Just a moment… Enable JavaScript and cookies to continue“. Kein Artikel, kein PDF. |
+| `jamanetwork.com` | Proxy lässt durch. Die Website antwortet mit HTTP 403, `cf-mitigated: challenge`, wie bei Karger. |
+| `archinte.jamanetwork.com` | Ziel der DOI-Weiterleitung für DuBois. „Could not resolve host“. |
+| `archive.org` | erreichbar (HTTP 200). Suche, Metadaten und die Textansicht `/stream/…` funktionieren. |
+| `ia800100.us.archive.org` | Proxy sperrt (kein Verbindungsaufbau). Dort liegen die Dateien der Scans (PDF, Seitenbilder). Bilder der Seiten konnten deshalb nicht angesehen werden. |
+| `zenodo.org` | Proxy sperrt (`CONNECT tunnel failed, response 403`). Die Adresse `https://zenodo.org/records/1423319` ist nicht erreichbar. |
+| `scholar.archive.org`, `api.fatcat.wiki` | Proxy sperrt (kein Verbindungsaufbau). |
+
+Die Cloudflare-Prüfung bei Karger und JAMA hat A nicht umgangen.
+
+### DuBois: gegen das Original geprüft, stimmt mit SPEC.md überein
+
+Quelle: Du Bois D, Du Bois EF. Clinical calorimetry. Tenth paper. A formula to estimate the approximate surface area if height and weight be known. Arch Intern Med 1916;17(6, Teil 2):863–871. Gelesen am 24.11.2026 als OCR-Text zweier unabhängiger Scans auf archive.org, Textansicht `https://archive.org/stream/<ID>/<ID>_djvu.txt`:
+
+- Scan 1: `n062archivesofintern17ameruoft`, „Archives of internal medicine“, Band „17 n.06 pt.02“, Beitrag „Gerstein - University of Toronto“. SHA-256 der abgerufenen Seite `8008ee01a1d502d4537d2d06f4e36eba6cb4964c6661a2d1d5400b27a416a1f8`.
+- Scan 2: `sim_jama-internal-medicine_1916-06-15_17_6`, „The Archives of Internal Medicine 1916-06-15: Vol 17 Iss 6“. SHA-256 der abgerufenen Seite `6b0c510b0e5c63380103642194d377406fc27e734bb966277b14ce2351692738`.
+
+Kopf des Artikels in Scan 2, wörtlich: „CLINICAL CALORIMETRY / TENTH PAPER / A FORMULA TO ESTIMATE THE APPROXIMATE SURFACE AREA IF HEIGHT AND WEIGHT BE KNOWN* / DELAFIELD Dv BOIS, B.S. … AND EUGENE F. Dv BOIS, M.D.“ („Dv“ ist ein OCR-Fehler für „Du“.)
+
+Seite 870 laut Seitenkopf („870 THE ARCHIVES OF INTERNAL MEDICINE“), Scan 1, wörtlich, einschließlich der OCR-Fehler:
+
+> The best values of "a" and "b" were found to be a = 2.35 and b = 1.38 giving the formula the final form of A = 1'2-35 X H1/13S X C or A = W0-425 X H0T25 X 71.84. This formula can be solved by logarithms as follows : Log. A = Log. W X 0.425 + Log. H X 0.725 + 1.8564. 1.8564 is a constant equal to Log. C.
+
+Dieselbe Logarithmus-Zeile in Scan 2: „Log. A= Log. W X 0.425 + Log. H &amp; 0.725 + 1.8564.“
+
+Seite 871, „SUMMARY AND CONCLUSIONS“, Scan 1, wörtlich:
+
+> This is expressed in the terms A = W0-*23 X H0-725 X C. A being the surface area in square centimeters, H the height in centimeters. W the weight in kilograms and C the constant, 71.84.
+
+Scan 2, gleiche Stelle: „A being the surface area in square centimeters, H the height in centimeters, W the weight in kilo- grams and C the constant, 71.84.“
+
+**Lesung:** In der direkten Schreibweise sind die Hochzahlen in beiden Scans von der OCR verstümmelt („W0-425“, „H0T25“, „W0-*23“). In beiden Scans eindeutig ist die Logarithmusform: log A = 0,425 · log W + 0,725 · log H + 1,8564. Sie bestätigt die Hochzahlen 0,425 und 0,725. Zwei weitere Angaben passen dazu: Die Exponenten folgen aus a = 2,35 und b = 1,38 (1/2,35 = 0,4255, 1/1,38 = 0,7246), und 1,8564 ist der Zehnerlogarithmus von 71,84 (log₁₀ 71,84 = 1,85637). Einheiten laut Original: A in cm², W in kg, H in cm.
+
+| SPEC.md | Original | Urteil |
+| --- | --- | --- |
+| Gewicht^0,425 | W^0.425, W in Kilogramm | gleich |
+| Größe^0,725 | H^0.725, H in Zentimetern | gleich |
+| 0,007184, Ergebnis in m² | C = 71.84, A in Quadratzentimetern; 71,84 cm² = 0,007184 m² | gleich |
+
+**Einschränkung:** Gelesen ist OCR-Text, nicht das Seitenbild. Die Bilder liegen auf `ia800100.us.archive.org`, und den sperrt der Proxy. Die Prüfung stützt sich auf die Übereinstimmung zweier unabhängiger Scans und auf die in sich stimmigen Angaben a, b und log C.
+
+### Cockcroft-Gault: Original weiterhin nicht erreichbar
+
+Versucht am 24.11.2026:
+
+- `https://doi.org/10.1159/000180580` leitet weiter zu `https://karger.com/article/doi/10.1159/000180580` und endet dort in der Cloudflare-Prüfung (HTTP 403).
+- `https://karger.com/nef/article/16/1/31/823303`: Cloudflare-Prüfung (HTTP 403).
+- `https://karger.com/nef/article-pdf/16/1/31/3301838/000180580.pdf`: Cloudflare-Prüfung (HTTP 403).
+- archive.org: Die Suche nach „nephron“ im Jahr 1976 und nach „cockcroft gault creatinine clearance“ findet keinen Scan des Originals, nur spätere PMC-Arbeiten, die die Formel zitieren. Diese sind Sekundärquellen und zählen nicht. Die Suche nach der DOI lieferte einen Fehler des Suchdienstes.
+- `scholar.archive.org` und `api.fatcat.wiki`: vom Proxy gesperrt.
+- PubMed Central: kein Volltext (PMID 1244564 ohne PMCID).
+
+**Belegt bleibt nur das PubMed-Abstract** („…in adult males: (see article)(15% less in females)“). Der Aufbau (140 − Alter) · Gewicht / (72 · Kreatinin) ist nicht am Original geprüft.
+
+### Folge
+
+Nach der Vorgabe von Justus gilt: Bleibt ein Original unerreichbar, wird angehalten und nicht gezählt. Frage 4 in `OFFEN.md` bleibt offen. Phase 2 hat nicht begonnen. Kein Skript ist geändert, nichts ist gezählt.

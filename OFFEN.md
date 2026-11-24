@@ -44,7 +44,7 @@ Jede Frage mit Datum, Anlass und Beleg. Entscheidung durch Justus; Auswerter A �
 
 **Frage:** Darf A mit diesen zwei Formeln zählen, obwohl sie nicht gegen das Original geprüft sind? Oder sollen erst die Hosts in der Umgebung freigegeben oder die Originale (PDF) ins Repo gelegt werden? Das Karger-PDF ist vermutlich kostenpflichtig, die Arbeit von 1916 gemeinfrei.
 
-**Status:** offen, vor dem Zählen zu entscheiden.
+**Status:** teilweise geklärt am 24.11.2026. Justus hat die gesperrten Domains freigegeben. DuBois ist gegen das Original geprüft und stimmt mit SPEC.md überein (`LOG.md`). Das Original von Cockcroft und Gault bleibt unerreichbar: karger.com antwortet mit einer Cloudflare-Prüfung statt des Artikels. **Weiterhin offen, Zählen angehalten.**
 
 ## 5. Bezeichnerspalte und Reihenfolge der Ausgabedateien von Abend 4 (24.11.2026, Auswerter A)
 
@@ -54,7 +54,7 @@ Jede Frage mit Datum, Anlass und Beleg. Entscheidung durch Justus; Auswerter A �
 
 **Frage:** Reicht es, wenn `vergleich.py` Zeilen und Spalten über ihre Namen zuordnet? Dann beeinflussen Spaltenname und Reihenfolge das Ergebnis nicht. Nicht blockierend für A.
 
-**Status:** offen.
+**Status:** beantwortet am 24.11.2026 durch Justus: Ja. `vergleich.py` ordnet Zeilen und Spalten über ihre Namen zu. Spaltenkopf und Reihenfolge sind frei.
 
 ## 6. „Ein Gewichtskriterium gibt es hier nicht“ (24.11.2026, Auswerter A)
 
@@ -64,7 +64,7 @@ Jede Frage mit Datum, Anlass und Beleg. Entscheidung durch Justus; Auswerter A �
 
 **Frage:** Ist die Lesart richtig? Nicht blockierend.
 
-**Status:** offen.
+**Status:** beantwortet am 24.11.2026 durch Justus: Ja, gemeint ist das Stichprobengewicht. Keine Bedingung an `WTMECPRP`.
 
 ## 7. Rückführbarkeit des Kreatinins auf IDMS (24.11.2026, Auswerter A)
 
@@ -74,7 +74,7 @@ Jede Frage mit Datum, Anlass und Beleg. Entscheidung durch Justus; Auswerter A �
 
 **Frage:** Soll die Rückführbarkeit vor der Hauptanalyse in einer Quelle der CDC belegt werden? Für den Pilot nicht blockierend.
 
-**Status:** offen.
+**Status:** beantwortet am 24.11.2026 durch Justus: Nicht im Pilot. Die Rückführbarkeit des Kreatinins wird im Protokoll der Hauptanalyse belegt.
 
 ## 8. Bezug der Diskordanz-Spalten und Zahlenformat der Personendateien (24.11.2026, Auswerter A)
 
@@ -84,4 +84,4 @@ Jede Frage mit Datum, Anlass und Beleg. Entscheidung durch Justus; Auswerter A �
 
 **b) Zahlenformat.** SPEC.md legt nicht fest, ob `SEQN` und die 1/0-Werte als `109263` und `1` oder als `109263.0` und `1.0` geschrieben werden. A schreibt ganze Zahlen ohne Dezimalpunkt. Liest B die `.xpt`-Dateien mit pandas, kommen diese Spalten als Gleitkommazahlen an. **Frage:** Soll `vergleich.py` `SEQN` und die Trefferspalten als Zahlen vergleichen statt als Text? Dann zählt `1.0` gegen `1` nicht als Abweichung, leer gegen gefüllt weiterhin schon.
 
-**Status:** offen. Nicht blockierend für A. Frage a betrifft zwei Spalten, die vor dem Zählen festgelegt sein sollten.
+**Status:** beantwortet am 24.11.2026 durch Justus: a) Ja, die Lesart von A gilt: Personen der Zeile, jede verschiedene Kategorie. b) Ja. `vergleich.py` vergleicht `SEQN`, `analysegruppe` und die Trefferspalten als ganze Zahlen und die Kategorien als Text. Leer gegen gefüllt bleibt eine Abweichung.
