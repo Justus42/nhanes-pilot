@@ -212,3 +212,176 @@ Die Tabelle ist aus `results/A/abend1_dateien.csv` übernommen, die das Skript g
 | `P_RXQ_RX_2026-11-23.htm` | `61fd01fba7680136125d63d4fdf86aa08f12b47057a68709ac34a8a51087f0e6` |
 
 **Vergleich mit der Quellenprüfung:** Die gesicherte P\_DEMO-Seite hat dieselbe Prüfsumme wie die am 23.11.2026 gelesene Live-Seite (`6ac8f9b3…1f918b86`, Abschnitt „Zusatzaufgabe vor Abend 2“, Punkt 3). Die Seite ist also Byte für Byte dieselbe. Die dort zitierten Stellen zu Definition 1 und 7 gelten unverändert für die gesicherte Fassung; eine erneute Prüfung der Zitate ist nicht nötig.
+
+## 2026-11-24 – Nachtrag zum Eintrag „Spezifikation Version 2.1“
+
+Der Eintrag zu Version 2.1 sagt, es seien noch keine Daten geladen gewesen. Genauer: Laut Eintrag vom 23.11. war P_DEMO.xpt schon per curl zum Erreichbarkeitstest abgerufen. Gerechnet war nichts.
+
+## 2026-11-24 – Abend 2, vor dem Rechnen: Prüflauf von `A/01_download.R` und Prüfung der KI-Formel
+
+### Prüflauf `A/01_download.R`
+
+Gestartet am 23.11.2026, 23:40 UTC, auf dem neuen Branch `abend-2` (von `main`, Stand `2c8c406`). Alle vier Dateien wurden frisch geladen. Alle vier SHA-256-Prüfsummen stimmen mit `results/A/abend1_dateien.csv` überein, alle vier Zeilenzahlen mit SPEC.md. Kein Abbruch. Am Skript ist nichts geändert.
+
+### Formel des Konfidenzintervalls gegen NCHS Series 2 Nr. 175
+
+**Quelle:** Parker JD, Talih M, Malec DJ, et al. National Center for Health Statistics data presentation standards for proportions. Vital Health Stat 2(175). 2017. <https://www.cdc.gov/nchs/data/series/sr_02/sr02_175.pdf>, abgerufen am 23.11.2026, SHA-256 `47a0d06b8f79ceb6de2725f1b94eb2320f7f41d64214790395b4bd035bd7b683`. Text mit `pdftotext` gelesen. Die Formeln stehen im PDF als Bild. Sie sind deshalb von den gerenderten Seiten abgeschrieben und hier als Formel wiedergegeben.
+
+**Wörtliche Stellen:**
+
+Titelseite: „This report was revised on November 1, 2018, where on page 4, RSE(Var) was misattributed as RSE(SE). This revision had no effect on the related standard. Table II (page 9) was updated on April 8, 2021, to fix a computing error affecting the confidence interval calculations.“
+
+Seite 2–3, effektive Stichprobengröße: „For an estimate from a complex survey, the effective sample size, n<sub>e</sub>, is defined as the sample size, n, divided by the design effect (7). One approach used to calculate n<sub>e</sub> for estimated proportions from a complex sample survey is:“ — Formel (Bild): n<sub>e</sub> = p̂(1 − p̂) / var̂(p̂).
+
+Seite 3, Kappung: „For complex sample surveys, due to sampling design and variability, there may be cases where the effective sample size is greater than the sample size. When the effective sample size is greater than the sample size, the sample size should be used to determine whether the minimum sample size criterion is met, and it should also be used for CIs and other computations that include the effective sample size.“
+
+Seite 3, null Ereignisse: „If the number of numerator events is 0 or equal to the denominator (the complement of 0 events), the estimated proportion will be 0 or 1, respectively. As a result, the estimated variance of the proportion will be 0, and the effective sample size will be undefined. In these cases, the sample size should be used to determine whether the minimum sample size criterion is met, and it should also be used for CIs and other computations that include the effective sample size.“
+
+Seite 3, Methode: „The Clopper-Pearson CI (2) [adapted for complex surveys by Korn and Graubard (3) when applicable] should be used to determine whether or not the CI of a proportion meets the presentation criteria.“ Und: „For complex sample surveys, the calculation of the Clopper-Pearson CI using the approach of Korn and Graubard incorporates information from the survey design, including the effective sample size and, when appropriate, the degrees of freedom.“
+
+Seite 4: „For complex sample surveys, default calculations from survey software may not be appropriate or feasible for all situations, including age-adjusted estimates, estimates based on multiple imputation, estimates for subgroups represented in only a subset of primary sampling units (PSUs) (e.g., some racial and ethnic groups and region-specific estimates), and when calculating annual or survey cycle estimates using a multiyear or multicycle data file. In these instances, the relevant information should be extracted and the CIs directly calculated.“
+
+Seite 4, Freiheitsgrade: „As one rule of thumb, the degrees of freedom can be calculated as the number of PSUs minus the number of strata. This calculation is used in most NCHS surveys and implemented in survey software, although specific calculations can vary across packages. However, default calculations of degrees of freedom from survey software may not be appropriate for subgroups represented in only a subset of PSUs (e.g., some racial and ethnic groups and region-specific estimates) and when calculating annual or survey cycle estimates using a multiyear or multicycle data file. In these instances, the relevant information should be extracted and the degrees of freedom directly calculated to assess estimate precision.“
+
+Seite 9, Fußnoten zu Tabelle II: „Sample size divided by the design effect. It is calculated in this table using this formula: n<sub>e</sub> = p̂(1 − p̂)/var̂(p̂).“ — „Lower and upper confidence bounds were computed using the Korn-Graubard method.“ — „Effective sample size is greater than sample size. Sample size used for CI calculations.“
+
+Literatur, Seite 6: „2. Clopper CJ, Pearson ES. The use of confidence or fiducial limits illustrated in the case of the binomial. Biometrika 26(4):404–13. 1934.“ und „3. Korn EL, Graubard BI. Confidence intervals for proportions with small expected number of positive counts estimated from survey data. Surv Methodol 24(2):193–201. 1998.“
+
+**Abgleich Punkt für Punkt:**
+
+| SPEC.md | Series 2 Nr. 175 | Urteil |
+| --- | --- | --- |
+| p(1 − p) / V | n<sub>e</sub> = p̂(1 − p̂)/var̂(p̂), Seite 3 und Fußnote Tabelle II | gleich |
+| min(n, …) | „When the effective sample size is greater than the sample size, the sample size should be used …“ | gleich im Ergebnis, siehe Rechenprobe |
+| Faktor (t(0,975; n − 1) / t(0,975; f))² | im Text nicht ausgeschrieben; nur „including the effective sample size and, when appropriate, the degrees of freedom“ mit Verweis auf Korn und Graubard (1998) | im Text nicht belegbar, durch die Rechenprobe bestätigt |
+| f = Cluster minus Strata der Teilgruppe | „number of PSUs minus the number of strata“; für Teilgruppen „directly calculated“ | gleich |
+| Beta-Quantile mit x und m − x + 1 bzw. x + 1 und m − x | im Text nicht ausgeschrieben; „Clopper-Pearson … adapted … by Korn and Graubard“. Das ist die übliche Beta-Form der Clopper-Pearson-Grenzen. | im Text nicht belegbar, durch die Rechenprobe bestätigt |
+| Fall p = 0 oder 1 | Series 2 Nr. 175: dann n statt n<sub>e</sub> | in SPEC.md nicht geregelt, siehe unten |
+
+**Rechenprobe an den Beispielen der Standards:** Skript `A/02_ki_formel_pruefung.R`, neu, Ausgabe `results/A/abend2_ki_formel_pruefung.csv`. Es liest keine NHANES-Rohdaten, sondern rechnet die 16 Zeilen der Anhangtabellen I (Seite 8) und II (Seite 9) aus den dort veröffentlichten n, n<sub>e</sub>, Prozentwerten und Freiheitsgraden nach. Drei Lesarten:
+
+| Lesart | größte Abweichung | auf 0,1 gleich | gleich mit Eingaben innerhalb ihrer Rundung (± 0,05) |
+| --- | --- | --- | --- |
+| SPEC.md: m = min(n, n<sub>e</sub> · Faktor) | 0,085 Prozentpunkte | 10 von 16 | 16 von 16 |
+| erst kappen, dann Faktor: m = min(n, n<sub>e</sub>) · Faktor | 2,326 Prozentpunkte | 6 von 16 | 8 von 16 |
+| ohne Faktor: m = min(n, n<sub>e</sub>) | 1,053 Prozentpunkte | 3 von 16 | 7 von 16 |
+
+Die Zahlen stehen in der Ausgabe des Skripts. Nur die Formel der Spezifikation trifft alle veröffentlichten Grenzen. Die beiden anderen Lesarten verfehlen sie um bis zu 2,3 Prozentpunkte. Damit sind auch die zwei Teile belegt, die der Text nicht ausschreibt: der Freiheitsgrad-Faktor und die Kappung erst nach dem Faktor. Ein Widerspruch im Text der Standards fällt dabei auf: Bei Women, Non-Hispanic Asian (n = 82, n<sub>e</sub> = 108,4, f = 7) sagt die Fußnote „Sample size used for CI calculations“, die veröffentlichten Grenzen 15,8–36,2 ergeben sich aber mit m = n<sub>e</sub> · Faktor = 76,75, also nicht mit n = 82. Mit n wären es 16,1–35,8. Die Zahlen der Tabelle folgen der SPEC-Formel.
+
+**Urteil: Die Formel der Spezifikation weicht nicht von Series 2 Nr. 175 ab.** Abend 2 wird gerechnet.
+
+**Lücke ohne Folge für Abend 2:** SPEC.md regelt nicht den Fall p = 0 oder 1 (V = 0, n<sub>e</sub> nicht definiert). Series 2 Nr. 175 nimmt dann n. Bei den sechs rohen Prävalenzen von Abend 2 (Zielwerte 6,4 % bis 42,1 %) kann der Fall nicht eintreten. Das Auswertungsskript bricht ab, falls er doch eintritt. Frage 3 in `OFFEN.md`, nicht blockierend.
+
+## 2026-11-24 – Abend 2: Positivkontrolle gerechnet
+
+**Skripte, neu:**
+
+- `A/03_positivkontrolle.R` rechnet die Stufen 1 bis 4 und schreibt `results/A/abend2_werte.csv`. Es enthält keine Zielwerte und keine erwarteten Fallzahlen. Vor dem Lesen prüft es die SHA-256 jeder Rohdatei gegen `results/A/abend1_dateien.csv`.
+- `A/04_zielvergleich.R` liest diese Datei, ergänzt Zielwert, Toleranz, Abweichung und Urteil und schreibt `results/A/abend2_positivkontrolle.csv`. Nur dieses Skript enthält die Zielwerte, abgeschrieben aus SPEC.md Version 2.1. Zielwerte und Toleranzen sind unverändert.
+
+Beide Skripte liefen ohne Fehler und ohne Änderung nach dem ersten Lauf. Ein zweiter Lauf hat beide CSV-Dateien Byte für Byte gleich erzeugt. R 4.3.3, survey 4.2.1.
+
+**Umsetzung der Spezifikation:**
+
+- Designbasis: 14.300 Personen mit `RIDSTATR = 2`, alle mit `WTMECPRP > 0`. P\_BMX per `SEQN` angefügt, keine Person verloren.
+- 24 Strata, 49 Cluster, 2 bis 3 Cluster je Stratum. Kein Stratum mit nur einem Cluster, also kein Eintrag in `OFFEN.md`. Freiheitsgrade des Designs: 25.
+- Masken für Analysegruppe, Geschlecht, Adipositas und schwere Adipositas sind vollständige Ja/Nein-Werte ohne fehlende Angaben. Ein fehlender BMI erfüllt keine Bedingung.
+- Teilgruppen über `subset()` auf dem Designobjekt, keine Zeile vorher gelöscht.
+- Altersadjustiert: `svyby(..., ~altersgruppe, covmat = TRUE)` und `svycontrast` mit 0,396579, 0,371795 und 0,231626. Gegenprobe im Skript: Jede Altersgruppe einzeln als Domäne gerechnet liefert dieselben Anteile und Varianzen wie `svyby`.
+- Vergleich: ungerundet, Abweichung = Wert − Ziel, bestanden bei |Abweichung| ≤ Toleranz. Vor dem Vergleich wird |Abweichung| auf 10 Nachkommastellen gerundet, damit Gleitkommareste (z. B. 0,1000000000000014) nicht zählen. Die Toleranz selbst ist unverändert.
+
+**Ergebnis: Abend 2 bestanden. Alle 29 extern geprüften Zellen liegen innerhalb der Toleranz.** Die größte Abweichung beträgt 0,049 Prozentpunkte (schwere Adipositas, Frauen, adjustiert). Alle Abweichungen sind kleiner als 0,05, also so klein, wie es die Rundung der Zielwerte auf eine Nachkommastelle erwarten lässt. Die Tabelle ist aus `results/A/abend2_positivkontrolle.csv` erzeugt, auf drei Stellen gerundet.
+
+| Stufe | Kennzahl | Gruppe | Art | Größe | Wert | Ziel | Abweichung | Toleranz | Urteil |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 1 | Analysegruppe | Gesamt |  | Fallzahl | 8295 | 8295 | 0,000 | 0,0 | bestanden |
+| 2 | Adipositas | Gesamt | roh | Praevalenz | 41,870 | 41,9 | -0,030 | 0,1 | bestanden |
+| 3 | Adipositas | Gesamt | roh | KI_unten | 39,424 | 39,4 | 0,024 | 0,2 | bestanden |
+| 3 | Adipositas | Gesamt | roh | KI_oben | 44,346 | 44,3 | 0,046 | 0,2 | bestanden |
+| 4 | Adipositas | Gesamt | adjustiert | Praevalenz | 41,871 | 41,9 | -0,029 | 0,1 | bestanden |
+| 4 | Adipositas | Gesamt | adjustiert | Standardfehler | 1,217 | 1,2 | 0,017 | 0,1 | bestanden |
+| 2 | Schwere Adipositas | Gesamt | roh | Praevalenz | 8,976 | 9,0 | -0,024 | 0,1 | bestanden |
+| 3 | Schwere Adipositas | Gesamt | roh | KI_unten | 7,780 | 7,8 | -0,020 | 0,2 | bestanden |
+| 3 | Schwere Adipositas | Gesamt | roh | KI_oben | 10,289 | 10,3 | -0,011 | 0,2 | bestanden |
+| 4 | Schwere Adipositas | Gesamt | adjustiert | Praevalenz | 9,238 | 9,2 | 0,038 | 0,1 | bestanden |
+| 4 | Schwere Adipositas | Gesamt | adjustiert | Standardfehler | 0,634 | 0,6 | 0,034 | 0,1 | bestanden |
+| 1 | Analysegruppe | Männer |  | Fallzahl | 4051 | 4051 | 0,000 | 0,0 | bestanden |
+| 2 | Adipositas | Männer | roh | Praevalenz | 41,584 | 41,6 | -0,016 | 0,1 | bestanden |
+| 3 | Adipositas | Männer | roh | KI_unten | 37,444 | 37,4 | 0,044 | 0,2 | bestanden |
+| 3 | Adipositas | Männer | roh | KI_oben | 45,814 | 45,8 | 0,014 | 0,2 | bestanden |
+| 4 | Adipositas | Männer | adjustiert | Praevalenz | 41,795 | 41,8 | -0,005 | 0,1 | bestanden |
+| 2 | Schwere Adipositas | Männer | roh | Praevalenz | 6,425 | 6,4 | 0,025 | 0,1 | bestanden |
+| 3 | Schwere Adipositas | Männer | roh | KI_unten | 5,095 | 5,1 | -0,005 | 0,2 | bestanden |
+| 3 | Schwere Adipositas | Männer | roh | KI_oben | 7,977 | 8,0 | -0,023 | 0,2 | bestanden |
+| 4 | Schwere Adipositas | Männer | adjustiert | Praevalenz | 6,617 | 6,6 | 0,017 | 0,1 | bestanden |
+| 1 | Analysegruppe | Frauen |  | Fallzahl | 4244 | 4244 | 0,000 | 0,0 | bestanden |
+| 2 | Adipositas | Frauen | roh | Praevalenz | 42,140 | 42,1 | 0,040 | 0,1 | bestanden |
+| 3 | Adipositas | Frauen | roh | KI_unten | 39,559 | 39,6 | -0,041 | 0,2 | bestanden |
+| 3 | Adipositas | Frauen | roh | KI_oben | 44,753 | 44,8 | -0,047 | 0,2 | bestanden |
+| 4 | Adipositas | Frauen | adjustiert | Praevalenz | 41,847 | 41,8 | 0,047 | 0,1 | bestanden |
+| 2 | Schwere Adipositas | Frauen | roh | Praevalenz | 11,381 | 11,4 | -0,019 | 0,1 | bestanden |
+| 3 | Schwere Adipositas | Frauen | roh | KI_unten | 9,678 | 9,7 | -0,022 | 0,2 | bestanden |
+| 3 | Schwere Adipositas | Frauen | roh | KI_oben | 13,267 | 13,3 | -0,033 | 0,2 | bestanden |
+| 4 | Schwere Adipositas | Frauen | adjustiert | Praevalenz | 11,749 | 11,7 | 0,049 | 0,1 | bestanden |
+
+**Standardfehler ohne externes Ziel** (Urteil `extern nicht geprüft`, maßgeblich ist später der Vergleich mit B), in Prozentpunkten:
+
+| Kennzahl | Gruppe | Art | Standardfehler |
+| --- | --- | --- | --- |
+| Adipositas | Gesamt | roh | 1,181 |
+| Schwere Adipositas | Gesamt | roh | 0,597 |
+| Adipositas | Männer | roh | 1,993 |
+| Adipositas | Männer | adjustiert | 2,050 |
+| Schwere Adipositas | Männer | roh | 0,679 |
+| Schwere Adipositas | Männer | adjustiert | 0,718 |
+| Adipositas | Frauen | roh | 1,245 |
+| Adipositas | Frauen | adjustiert | 1,248 |
+| Schwere Adipositas | Frauen | roh | 0,852 |
+| Schwere Adipositas | Frauen | adjustiert | 0,915 |
+
+Beobachtung ohne Folge: Die rohen Standardfehler der Gesamtgruppe (1,181 und 0,597) lägen ebenfalls innerhalb der Toleranz zu 1,2 und 0,6. Die Zuordnung zur adjustierten Schätzung aus Version 2.1 entscheidet also nicht über das Ergebnis.
+
+**Konfidenzintervalle, Angaben zur Formel:**
+
+| Kennzahl | Gruppe | n | f | m |
+| --- | --- | --- | --- | --- |
+| Adipositas | Gesamt | 8295 | 25 | 1581,8 |
+| Schwere Adipositas | Gesamt | 8295 | 25 | 2073,3 |
+| Adipositas | Männer | 4051 | 25 | 554,1 |
+| Schwere Adipositas | Männer | 4051 | 25 | 1181,6 |
+| Adipositas | Frauen | 4244 | 25 | 1424,7 |
+| Schwere Adipositas | Frauen | 4244 | 25 | 1257,6 |
+
+In allen sechs Fällen ist m kleiner als n, die Kappung greift nicht. f = 25 in jeder Teilgruppe: Alle 49 Cluster und 24 Strata enthalten Personen jeder Teilgruppe.
+
+**`svyciprop(method = "beta")`:** zusätzlich ausgegeben (Zeilen `KI_unten_svyciprop_beta` und `KI_oben_svyciprop_beta`, Urteil `extern nicht geprüft`). Größte Differenz zur Formel der Spezifikation: 7,1 · 10⁻¹⁵ Prozentpunkte, also Rechenrauschen. Laut Quelltext von survey 4.2.1 rechnet `svyciprop` mit n<sub>e</sub> · (t(nrow(design) − 1)/t(degf(design)))² ohne Kappung bei n. Für das Teilgruppen-Design ist `nrow` gleich n (geprüft für die Gesamtgruppe: 8.295) und `degf` gleich 25 = f. Weil die Kappung hier nicht greift, ist das dieselbe Rechnung. Unter offenem Punkt 8 der Spezifikation ist damit beantwortet, ob `svyciprop` dasselbe liefert: hier ja.
+
+**Nicht gerechnet:** altersadjustierte Konfidenzintervalle. Laut SPEC.md sind sie kein Kriterium, und SPEC.md legt dafür keine Formel fest.
+
+**Offen:** Frage 3 in `OFFEN.md` (Randfall p = 0 oder 1), ohne Einfluss auf Abend 2.
+
+## 2026-11-24 – Nachtrag zum Eintrag „Abend 2: Positivkontrolle gerechnet“
+
+### Änderungen an `A/03_positivkontrolle.R` nach dem ersten Lauf
+
+Der Eintrag sagt, beide Skripte liefen „ohne Änderung nach dem ersten Lauf“. Für `A/04_zielvergleich.R` stimmt das. Für `A/03_positivkontrolle.R` stimmt es nicht. Nach dem ersten Lauf von A/03 habe ich drei Dinge geändert:
+
+1. Die Zeile `sub_alter <- subset(des, basis[[gruppen[[g]]]])` gestrichen. Sie baute dasselbe Teilgruppen-Design wie das schon vorhandene Objekt `sub` ein zweites Mal.
+2. In `svyby(...)` deshalb `sub_alter` durch `sub` ersetzt.
+3. Am Ende fünf Zeilen ergänzt, die die größte Differenz zwischen SPEC-Formel und `svyciprop(method = "beta")` auf die Konsole schreiben. Sie schreiben nichts in eine Datei.
+
+**Reihenfolge:** erster Lauf von A/03, dann die drei Änderungen, dann zweiter Lauf von A/03, erst danach der erste Lauf von A/04. A/04 hat also nie die Ausgabe der ersten Fassung von A/03 gelesen. Committet ist nur die geänderte Fassung (Commit `c0b4a40`).
+
+**Wirkung auf `results/A/abend2_werte.csv`: keine.** Die Datei des ersten Laufs ist beim zweiten Lauf überschrieben worden und nicht erhalten. Geprüft habe ich deshalb so: Die erste Fassung wurde durch Rückbau genau dieser drei Änderungen wiederhergestellt (`diff` gegen die committete Fassung zeigt nur sie) und in einer getrennten Kopie des Arbeitsverzeichnisses außerhalb des Repos gegen dieselben Rohdaten ausgeführt, einmal mit und einmal ohne `LANG=C.UTF-8`, wie beim ersten Lauf. Beide Male ist die erzeugte Datei Byte für Byte gleich der committeten `abend2_werte.csv` (SHA-256 `1e2473729aca654823c5872ddc14b3d9408eea53afc56e66821c00ef0b170755`). Einschränkung: Verglichen ist eine Rekonstruktion der ersten Fassung, nicht die ursprüngliche Datei.
+
+Der Satz „Ein zweiter Lauf hat beide CSV-Dateien Byte für Byte gleich erzeugt“ im Eintrag meint einen weiteren Lauf der schon geänderten Fassung von A/03 und von A/04. Er belegt nichts über die erste Fassung.
+
+### Abgeschriebene Eingabe der Zeile Men, Non-Hispanic black
+
+**Wo der Fehler stand:** nicht in `A/02_ki_formel_pruefung.R`, sondern in einem vorläufigen Prüfskript im Scratchpad der Sitzung, das ich vor A/02 geschrieben und nicht committet habe. A/02 entstand erst danach und enthielt von Anfang an den richtigen Wert.
+
+**Zuerst stand da:** n = 195, n<sub>e</sub> = 242,2, Prozentwert **42,1**, f = 12, Grenzen 28,3–42,1. **Jetzt steht da** (in A/02, Zeile `Men_NH_black`): n = 195, n<sub>e</sub> = 242,2, Prozentwert **34,9**, f = 12, Grenzen 28,3–42,1. Falsch war nur der Prozentwert. Ich hatte die obere Grenze 42,1 in die Spalte „Percent estimate“ übernommen.
+
+**Woran ich es bemerkt habe:** Im ersten Lauf des vorläufigen Skripts traf die SPEC-Formel 12 der 13 damals eingegebenen Zeilen auf höchstens 0,08 Prozentpunkte. Diese Zeile lag dagegen 7,26 Prozentpunkte daneben, die beiden anderen Lesarten 7,26 und 8,06. Dabei fiel auf, dass der eingegebene Prozentwert genau der veröffentlichten oberen Grenze glich. Ich habe dann die gerenderte Seite 9 der Quelle erneut angesehen. Dort lautet die Zeile „Non-Hispanic black … 195 242.2 34.9 3.06 8.8 28.3 42.1 13.8 39.5 12“. Am 24.11.2026 noch einmal im Text des PDF (`pdftotext -layout`) nachgesehen: dieselbe Zeile, Prozentwert 34.9. Anlass für das Nachsehen war also die Abweichung im eigenen Ergebnis. Grundlage der Korrektur ist allein die Quelle.
+
+**Weitere Änderung an A/02 nach dessen erstem Lauf:** Ich habe die Prüfung ergänzt, ob die Abweichungen durch die Rundung der Eingaben erklärbar sind. Dazu kamen die Funktion `erklaerbar` und die Spalte `durch_rundung_erklaerbar` in `results/A/abend2_ki_formel_pruefung.csv` hinzu. Die übrigen Werte blieben gleich. Die Konsolenausgabe beider Läufe nennt dieselben größten Abweichungen (0,085, 2,326 und 1,053 Prozentpunkte). Committet ist der zweite Lauf (Commit `65048fa`).

@@ -23,3 +23,15 @@ Jede Frage mit Datum, Anlass und Beleg. Entscheidung durch Justus; Auswerter A �
 **Frage:** Bleibt es bei den vier Stellen der Spezifikation, oder sollen beide Auswerter die sechs Stellen der Quelle verwenden? A rechnet bis zur Entscheidung mit den Werten aus SPEC.md.
 
 **Status:** beantwortet durch SPEC.md Version 2.1 (Pull Request 3). Es gelten die sechsstelligen Werte der Quelle: 0,396579, 0,371795, 0,231626.
+
+## 3. Konfidenzintervall bei p = 0 oder p = 1 (24.11.2026, Auswerter A)
+
+**Anlass:** Prüfung der KI-Formel gegen NCHS Series 2 Nr. 175 vor Abend 2 (Zusatzauftrag 4).
+
+**Beleg:** Series 2 Nr. 175, Seite 3, wörtlich: „If the number of numerator events is 0 or equal to the denominator (the complement of 0 events), the estimated proportion will be 0 or 1, respectively. As a result, the estimated variance of the proportion will be 0, and the effective sample size will be undefined. In these cases, the sample size should be used to determine whether the minimum sample size criterion is met, and it should also be used for CIs and other computations that include the effective sample size.“ SPEC.md, Abend 2, schreibt m = min(n, p · (1 − p) / V · …) ohne diesen Fall. Bei V = 0 ist der Ausdruck nicht definiert.
+
+**Einschätzung von A:** Kein Widerspruch zur Formel, sondern ein ungeregelter Randfall. Für Abend 2 ohne Folge, weil keine der sechs rohen Prävalenzen 0 oder 1 sein kann. Das Auswertungsskript bricht in diesem Fall ab, statt zu raten. Der Rest der Formel ist gegen die Beispiele der Standards geprüft (`LOG.md`, 24.11.2026).
+
+**Frage:** Soll SPEC.md als Klarstellung ergänzen: „Ist p = 0 oder p = 1, gilt m = n“? Nicht blockierend für Abend 2.
+
+**Status:** beantwortet am 24.11.2026 durch Justus: keine Änderung an SPEC.md. Der Fall kann im Pilot nicht eintreten, das Skript bricht ab. Die Regel wird im Protokoll der Hauptanalyse festgelegt.

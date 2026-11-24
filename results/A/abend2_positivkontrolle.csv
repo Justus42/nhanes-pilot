@@ -1,0 +1,52 @@
+"stufe","kennzahl","gruppe","art","groesse","wert","zielwert","abweichung","toleranz","urteil","n","f","m"
+1,"Analysegruppe","Gesamt","","Fallzahl",8295,8295,0,0,"bestanden",,,
+2,"Adipositas","Gesamt","roh","Praevalenz",41.869862889614375,41.9,-0.030137110385624055,0.1,"bestanden",,,
+2,"Adipositas","Gesamt","roh","Standardfehler",1.1806306544607676,,,,"extern nicht geprüft",,,
+3,"Adipositas","Gesamt","roh","KI_unten",39.424061375120132,39.4,0.024061375120133732,0.2,"bestanden",8295,25,1581.8229416219926
+3,"Adipositas","Gesamt","roh","KI_oben",44.345898395270332,44.3,0.045898395270334902,0.2,"bestanden",8295,25,1581.8229416219926
+3,"Adipositas","Gesamt","roh","KI_unten_svyciprop_beta",39.424061375120132,,,,"extern nicht geprüft",,,
+3,"Adipositas","Gesamt","roh","KI_oben_svyciprop_beta",44.345898395270332,,,,"extern nicht geprüft",,,
+4,"Adipositas","Gesamt","adjustiert","Praevalenz",41.870547180198159,41.9,-0.02945281980183978,0.1,"bestanden",,,
+4,"Adipositas","Gesamt","adjustiert","Standardfehler",1.2173555047883051,1.2,0.017355504788305165,0.1,"bestanden",,,
+2,"Schwere Adipositas","Gesamt","roh","Praevalenz",8.9760918956426323,9,-0.023908104357367677,0.1,"bestanden",,,
+2,"Schwere Adipositas","Gesamt","roh","Standardfehler",0.59749260855191044,,,,"extern nicht geprüft",,,
+3,"Schwere Adipositas","Gesamt","roh","KI_unten",7.7802567289544085,7.8,-0.019743271045591371,0.2,"bestanden",8295,25,2073.2935107432841
+3,"Schwere Adipositas","Gesamt","roh","KI_oben",10.289328895413552,10.3,-0.010671104586448266,0.2,"bestanden",8295,25,2073.2935107432841
+3,"Schwere Adipositas","Gesamt","roh","KI_unten_svyciprop_beta",7.7802567289544085,,,,"extern nicht geprüft",,,
+3,"Schwere Adipositas","Gesamt","roh","KI_oben_svyciprop_beta",10.289328895413552,,,,"extern nicht geprüft",,,
+4,"Schwere Adipositas","Gesamt","adjustiert","Praevalenz",9.2383029881892007,9.2,0.038302988189201415,0.1,"bestanden",,,
+4,"Schwere Adipositas","Gesamt","adjustiert","Standardfehler",0.6339613199279085,0.6,0.033961319927908518,0.1,"bestanden",,,
+1,"Analysegruppe","Männer","","Fallzahl",4051,4051,0,0,"bestanden",,,
+2,"Adipositas","Männer","roh","Praevalenz",41.583711014746825,41.6,-0.016288985253176236,0.1,"bestanden",,,
+2,"Adipositas","Männer","roh","Standardfehler",1.9932265484225147,,,,"extern nicht geprüft",,,
+3,"Adipositas","Männer","roh","KI_unten",37.443965258995689,37.4,0.043965258995690704,0.2,"bestanden",4051,25,554.06387129061977
+3,"Adipositas","Männer","roh","KI_oben",45.813684108931241,45.8,0.013684108931244054,0.2,"bestanden",4051,25,554.06387129061977
+3,"Adipositas","Männer","roh","KI_unten_svyciprop_beta",37.443965258995689,,,,"extern nicht geprüft",,,
+3,"Adipositas","Männer","roh","KI_oben_svyciprop_beta",45.813684108931241,,,,"extern nicht geprüft",,,
+4,"Adipositas","Männer","adjustiert","Praevalenz",41.795023451055272,41.8,-0.0049765489447253231,0.1,"bestanden",,,
+4,"Adipositas","Männer","adjustiert","Standardfehler",2.0500713553017795,,,,"extern nicht geprüft",,,
+2,"Schwere Adipositas","Männer","roh","Praevalenz",6.4253335375588447,6.4,0.025333537558844377,0.1,"bestanden",,,
+2,"Schwere Adipositas","Männer","roh","Standardfehler",0.6790580066855284,,,,"extern nicht geprüft",,,
+3,"Schwere Adipositas","Männer","roh","KI_unten",5.0948168785224883,5.1,-0.005183121477511321,0.2,"bestanden",4051,25,1181.5610499068455
+3,"Schwere Adipositas","Männer","roh","KI_oben",7.9774716657087357,8,-0.022528334291264329,0.2,"bestanden",4051,25,1181.5610499068455
+3,"Schwere Adipositas","Männer","roh","KI_unten_svyciprop_beta",5.0948168785224883,,,,"extern nicht geprüft",,,
+3,"Schwere Adipositas","Männer","roh","KI_oben_svyciprop_beta",7.9774716657087357,,,,"extern nicht geprüft",,,
+4,"Schwere Adipositas","Männer","adjustiert","Praevalenz",6.6173115300491911,6.6,0.017311530049191504,0.1,"bestanden",,,
+4,"Schwere Adipositas","Männer","adjustiert","Standardfehler",0.71789454591114443,,,,"extern nicht geprüft",,,
+1,"Analysegruppe","Frauen","","Fallzahl",4244,4244,0,0,"bestanden",,,
+2,"Adipositas","Frauen","roh","Praevalenz",42.139694158165881,42.1,0.039694158165879401,0.1,"bestanden",,,
+2,"Adipositas","Frauen","roh","Standardfehler",1.2452956434873053,,,,"extern nicht geprüft",,,
+3,"Adipositas","Frauen","roh","KI_unten",39.559055116480849,39.6,-0.040944883519152597,0.2,"bestanden",4244,25,1424.7258557353216
+3,"Adipositas","Frauen","roh","KI_oben",44.752812185679971,44.8,-0.047187814320025723,0.2,"bestanden",4244,25,1424.7258557353216
+3,"Adipositas","Frauen","roh","KI_unten_svyciprop_beta",39.559055116480849,,,,"extern nicht geprüft",,,
+3,"Adipositas","Frauen","roh","KI_oben_svyciprop_beta",44.752812185679979,,,,"extern nicht geprüft",,,
+4,"Adipositas","Frauen","adjustiert","Praevalenz",41.846690273340961,41.8,0.046690273340963984,0.1,"bestanden",,,
+4,"Adipositas","Frauen","adjustiert","Standardfehler",1.2475193883253439,,,,"extern nicht geprüft",,,
+2,"Schwere Adipositas","Frauen","roh","Praevalenz",11.381368337912017,11.4,-0.018631662087983614,0.1,"bestanden",,,
+2,"Schwere Adipositas","Frauen","roh","Standardfehler",0.85247890654629976,,,,"extern nicht geprüft",,,
+3,"Schwere Adipositas","Frauen","roh","KI_unten",9.6782494404519124,9.7,-0.021750559548086912,0.2,"bestanden",4244,25,1257.6400940337473
+3,"Schwere Adipositas","Frauen","roh","KI_oben",13.267301007825939,13.3,-0.032698992174061914,0.2,"bestanden",4244,25,1257.6400940337473
+3,"Schwere Adipositas","Frauen","roh","KI_unten_svyciprop_beta",9.6782494404519142,,,,"extern nicht geprüft",,,
+3,"Schwere Adipositas","Frauen","roh","KI_oben_svyciprop_beta",13.267301007825939,,,,"extern nicht geprüft",,,
+4,"Schwere Adipositas","Frauen","adjustiert","Praevalenz",11.748508666741893,11.7,0.048508666741893691,0.1,"bestanden",,,
+4,"Schwere Adipositas","Frauen","adjustiert","Standardfehler",0.9150994670499738,,,,"extern nicht geprüft",,,
