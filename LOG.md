@@ -549,3 +549,48 @@ Gegen die gesicherten Seiten zu P\_RXQ\_RX, P\_BMX und P\_BIOPRO gelesen. Vier F
 - P\_RXQ\_RX: „Respondent sequence number (SEQN) in the prescription medication data is not a unique identifier. […] Analysts should convert a drug-level data to a person-level data […] before merging“. Das deckt sich mit SPEC.md.
 - P\_BMX: „RIDEXPRG for several pregnant women who were outside of this age range are not reported due to disclosure concerns. The body measures data for these participants are also not reported.“ Schwangere außerhalb von 20–44 Jahren haben also kein `BMXWT` und kein `BMXHT`. Sie fallen über die Bedingung „vorhanden“ ohnehin aus der Analysegruppe. Kein Widerspruch zu Definition 1.
 - P\_BMX: „The body weight data for participants who had limb amputations were set to “missing.”“ Diese Personen fallen ebenfalls aus der Analysegruppe. Das ist eine Folge der Spezifikation, kein Widerspruch.
+
+## 2026-11-24 – Abend 4, Phase 1, Zusatz: Lesart der Ausgabe (vor dem Zählen)
+
+Auftrag von Justus nach dem Entwurfs-PR 6. Es ist weiterhin nichts gezählt. Kein Skript ist geändert. Das Zählskript gibt es noch nicht. Es setzt die folgende Lesart um.
+
+**Bezeichnungen.** A ist die Analysegruppe aus SPEC.md, Abend 4: alle `SEQN` aus P\_DEMO mit `RIDAGEYR >= 18`, `RIDSTATR = 2`, `RIAGENDR` gleich 1 oder 2, `is.na(RIDEXPRG) | RIDEXPRG != 1` sowie `LBXSCR`, `BMXWT` und `BMXHT` jeweils vorhanden und größer null. P\_BIOPRO und P\_BMX werden per `SEQN` an P\_DEMO angefügt, ohne Personen zu verlieren. Eine Trefferzeile ist eine Zeile aus P\_RXQ\_RX mit `RXDUSE = 1` (nicht fehlend) und einem Namen, der laut `name_trifft` einen Suchbegriff der Zeile trifft. P(z) ist die Personenmenge der Ausgabezeile z: in einer Wirkstoffzeile die Personen aus A mit mindestens einer Trefferzeile für deren Suchbegriffe, in `GESAMT` ganz A. Alle Werte gehen ungerundet ein. „Unter 60“ heißt Wert < 60, gleichbedeutend mit einer Kategorie aus `u30`, `30_45`, `45_60`.
+
+### 1. Welche Personenmenge zählt jede Spalte?
+
+| Spalte | gezählte Personenmenge |
+| --- | --- |
+| `n_personen` | Alle Personen in P(z), also in einer Wirkstoffzeile die Personen der Analysegruppe mit mindestens einer Trefferzeile, in `GESAMT` die ganze Analysegruppe. |
+| `n_ckdepi_u60` | Die Personen in P(z), deren CKD-EPI 2021 indexiert unter 60 ml/min/1,73 m² liegt. |
+| `n_deindex_u60` | Die Personen in P(z), deren CKD-EPI 2021 de-indexiert (indexiert · KOF nach DuBois / 1,73) unter 60 ml/min liegt. |
+| `n_cg_u60` | Die Personen in P(z), deren Cockcroft-Gault-Wert unter 60 ml/min liegt. |
+| `n_irgendeine_u60` | Die Personen in P(z), bei denen mindestens einer der drei Werte unter 60 liegt; jede Person zählt höchstens einmal (Vereinigung, nicht Summe). |
+| `n_diskordant_cg_ckdepi` | Die Personen in P(z), deren Kategorie nach Cockcroft-Gault (`u30`, `30_45`, `45_60`, `ab60`) sich von der Kategorie nach CKD-EPI indexiert unterscheidet, egal an welcher der drei Grenzen. |
+| `n_diskordant_cg_deindex` | Die Personen in P(z), deren Kategorie nach Cockcroft-Gault sich von der Kategorie nach CKD-EPI de-indexiert unterscheidet, egal an welcher Grenze. |
+| `n_alter_80` | Die Personen in P(z) mit `RIDAGEYR = 80`, also mit dem auf 80 gedeckelten Alter. |
+
+Jede Spalte außer `n_personen` ist eine Teilmenge von P(z). Daraus folgen Prüfungen, die das Zählskript vor dem Schreiben macht: Jede Spalte ist kleiner oder gleich `n_personen`. `n_irgendeine_u60` ist mindestens so groß wie das Maximum der drei u60-Spalten und höchstens so groß wie ihre Summe. `DOAK_GESAMT` ist mindestens so groß wie jede einzelne DOAK-Zeile und höchstens so groß wie ihre Summe.
+
+Bei den zwei Diskordanz-Spalten steht in SPEC.md kein „davon“. A liest sie wie die übrigen Spalten als Teilmenge von P(z). Das steht als Frage 8a in `OFFEN.md`.
+
+### 2. Erste Spalte und Reihenfolge in `results/A/abend4_fallzahlen.csv`
+
+- Kopf der ersten Spalte: `zeile`.
+- Danach die acht Spalten in der Reihenfolge der Tabelle „Ausgabe“: `n_personen`, `n_ckdepi_u60`, `n_deindex_u60`, `n_cg_u60`, `n_irgendeine_u60`, `n_diskordant_cg_ckdepi`, `n_diskordant_cg_deindex`, `n_alter_80`.
+- Zwölf Zeilen in dieser Reihenfolge: `METFORMIN`, `GABAPENTIN`, `PREGABALIN`, `DOAK_GESAMT`, `ALLOPURINOL`, `SITAGLIPTIN`, `SPIRONOLACTONE`, `APIXABAN`, `RIVAROXABAN`, `DABIGATRAN`, `EDOXABAN`, `GESAMT`. Zuerst die sieben Zeilen der Tabelle in SPEC.md, dann die vier DOAK in der Reihenfolge des Satzes „Zusätzlich gibt es je eine Zeile …“, zuletzt `GESAMT`.
+- Format: Komma als Trenner, Kopfzeile, keine Anführungszeichen, keine Zeilennamen, Zeilenende LF, nur ASCII. Die Zahlen sind ganze Zahlen ohne Dezimalpunkt.
+
+Die Spezifikation legt Spaltenkopf und Reihenfolge nicht fest. Diese Festlegung ist die von A, siehe Frage 5 in `OFFEN.md`.
+
+### 3. Format von `data/work/abend4_personen_A.csv`
+
+- Genau 15.560 Datenzeilen, eine je `SEQN` aus P\_DEMO, aufsteigend nach `SEQN` sortiert, dazu eine Kopfzeile. Das Skript bricht ab, wenn `SEQN` in P\_DEMO nicht eindeutig ist oder die Zeilenzahl nicht 15.560 beträgt.
+- Spalten in dieser Reihenfolge: `SEQN`, `analysegruppe`, `METFORMIN`, `GABAPENTIN`, `PREGABALIN`, `DOAK_GESAMT`, `ALLOPURINOL`, `SITAGLIPTIN`, `SPIRONOLACTONE`, `APIXABAN`, `RIVAROXABAN`, `DABIGATRAN`, `EDOXABAN`, `kat_ckdepi`, `kat_deindex`, `kat_cg`. Eine Spalte `GESAMT` gibt es nicht.
+- `SEQN`: ganze Zahl ohne Dezimalpunkt und ohne wissenschaftliche Schreibweise, z. B. `109263`.
+- `analysegruppe`: `1` oder `0` für jede Person, nie leer.
+- Elf Trefferspalten: `1` oder `0` für Personen der Analysegruppe, auch für Personen ohne Medikamentenzeile (dann `0`). Für Personen außerhalb der Analysegruppe ein leeres Feld. Geschrieben wird `1` oder `0`, nicht `1.0`, `TRUE` oder `NA`.
+- `kat_ckdepi`, `kat_deindex`, `kat_cg`: `u30`, `30_45`, `45_60` oder `ab60` für Personen der Analysegruppe, ein leeres Feld für alle anderen.
+- Leere Werte: nichts zwischen zwei Kommas, beziehungsweise nichts nach dem letzten Komma. Kein `NA`, keine Anführungszeichen, kein Leerzeichen.
+- Format sonst wie oben: Komma, keine Anführungszeichen, keine Zeilennamen, LF, ASCII. Die Datei liegt laut SPEC.md nicht im Git.
+
+Welche Zahlenformate B schreibt, legt die Spezifikation nicht fest, etwa `1.0` statt `1` oder `109263.0` statt `109263`. Ein Vergleich als Text würde das als Abweichung zählen. Das steht als Frage 8b in `OFFEN.md`.

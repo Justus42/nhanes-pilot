@@ -75,3 +75,13 @@ Jede Frage mit Datum, Anlass und Beleg. Entscheidung durch Justus; Auswerter A �
 **Frage:** Soll die Rückführbarkeit vor der Hauptanalyse in einer Quelle der CDC belegt werden? Für den Pilot nicht blockierend.
 
 **Status:** offen.
+
+## 8. Bezug der Diskordanz-Spalten und Zahlenformat der Personendateien (24.11.2026, Auswerter A)
+
+**Anlass:** Lesart der Ausgabe von Abend 4, festgehalten in `LOG.md` vor dem Zählen.
+
+**a) Diskordanz-Spalten.** In der Tabelle „Ausgabe“ beginnen `n_ckdepi_u60`, `n_deindex_u60`, `n_cg_u60`, `n_irgendeine_u60` und `n_alter_80` mit „davon“, beziehen sich also auf die Personen der Zeile. Bei `n_diskordant_cg_ckdepi` und `n_diskordant_cg_deindex` fehlt das Wort. A liest beide ebenfalls als „davon“, also nur Personen mit Treffer in dieser Zeile, in `GESAMT` die ganze Analysegruppe. Gezählt wird jede verschiedene Kategorie, nicht nur ein Unterschied an der Grenze 60. **Frage:** Ist diese Lesart richtig?
+
+**b) Zahlenformat.** SPEC.md legt nicht fest, ob `SEQN` und die 1/0-Werte als `109263` und `1` oder als `109263.0` und `1.0` geschrieben werden. A schreibt ganze Zahlen ohne Dezimalpunkt. Liest B die `.xpt`-Dateien mit pandas, kommen diese Spalten als Gleitkommazahlen an. **Frage:** Soll `vergleich.py` `SEQN` und die Trefferspalten als Zahlen vergleichen statt als Text? Dann zählt `1.0` gegen `1` nicht als Abweichung, leer gegen gefüllt weiterhin schon.
+
+**Status:** offen. Nicht blockierend für A. Frage a betrifft zwei Spalten, die vor dem Zählen festgelegt sein sollten.
