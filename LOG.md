@@ -772,3 +772,134 @@ Aus der Datei übernommen, ungewichtete Personenzahlen:
 - Die Spalten `n_cg_u60`, `n_irgendeine_u60`, `n_diskordant_cg_ckdepi`, `n_diskordant_cg_deindex` und `kat_cg` hängen von der Cockcroft-Gault-Formel ab. Deren Prüfung am Volltext steht noch aus (bekannte Lücke, siehe oben).
 - Die Zahlen sind nicht mit B verglichen. Erst danach wird die Entscheidungsregel angewendet.
 - `data/work/abend4_personen_A.csv`: 15.560 Datenzeilen plus Kopfzeile, 16 Spalten, ASCII, Format wie im Eintrag zur Lesart festgelegt. Die Datei liegt laut `.gitignore` nicht im Git.
+
+## 2026-11-24 – Abend 4: Vergleich A gegen B
+
+Gerechnet von der Vergleichssitzung (Claude Code, nicht Auswerter A), Branch `abend-4-vergleich` von `main` (Stand `40f90a9`, nach Abend 4 Phase 2). Die Entscheidungsregel ist **nicht** angewendet. Keine Definition ist geändert. An A und B ist nichts geändert.
+
+### 1. Prüflauf `A/01_download.R`
+
+Gestartet am 24.11.2026, 06:50 UTC. Alle vier Dateien frisch geladen. Alle vier SHA-256-Prüfsummen stimmen mit `results/A/abend1_dateien.csv` überein, alle vier Zeilenzahlen mit SPEC.md. Kein Abbruch. Am Skript ist nichts geändert.
+
+### 2. Skript und Annahmen von Auswerter B
+
+- `B/fallzahlen.py`, geschrieben von Gemini 4 Neon, übergeben von Justus im Auftrag für diesen Abend. Unverändert abgelegt und vor dem ersten Lauf einzeln committet (`4bcd069`). 497 Zeilen, SHA-256 `e65f782ab54585eed9013a9ee57e86c92380b1d9286371506b094d121ef06903`. Die Datei endet mit genau einem Zeilenumbruch nach `sys.exit(1)`. Ob die Vorlage einen hatte, lässt der Auftragstext nicht erkennen.
+- `B/neon_annahmen_abend4.md`: Annahmen und Fragen von Neon, unverändert, eigener Commit (`50270ac`). 10 Zeilen, SHA-256 `ea77bf6de534540e31c962eb80059de737e3df3f6a30a6667cab2875e84cd22a`. Die zwei Leerzeichen am Ende der Zeile „Leere Felder …“ stehen so in der Vorlage.
+- Neons drei offene Fragen sind schon beantwortet und verlangen keine Änderung: Bezeichnerspalte und Reihenfolge (`OFFEN.md`, Frage 5: Zuordnung über Namen), leere Felder (A schreibt leere Felder, kein `NA`; Eintrag „Lesart der Ausgabe“), Kreatinin zwischen den Geräten (keine Umrechnung; Eintrag „Abend 4, Phase 1“, Punkt 2).
+
+### 3. Personendatei von A neu erzeugt
+
+`A/06_rechentests.R` und danach `A/07_fallzahlen.R` unverändert ausgeführt. Die SHA-256 von `A/05_formeln.R`, `A/06_rechentests.R` und `A/07_fallzahlen.R` sind gleich den Werten in den Einträgen zu Abend 4, Phase 1 und 2. Beide Skripte liefen ohne Abbruch, alle 18 Prüfungen von A/06 bestanden.
+
+- `results/A/abend4_fallzahlen.csv`, `abend4_rechentests.csv` und `abend4_treffernamen.csv`: Byte für Byte gleich der committeten Fassung (`cmp` gegen `git show HEAD:…`).
+- `data/work/abend4_personen_A.csv`: SHA-256 `05967ffe1c6cce629bd11a81d9787818946d50750545f9e908393fd3a636e2af`, gleich dem Wert im Eintrag „Abend 4, Phase 2“.
+
+### 4. Lauf von `B/fallzahlen.py`
+
+Umgebung: Python 3.13.18, pandas 3.0.5, numpy 2.5.3. Nichts installiert. Lauf mit `python3 B/fallzahlen.py` aus dem Wurzelverzeichnis am 24.11.2026, 06:51 UTC: kein Abbruch. Prüfsumme des Skripts nach dem Lauf unverändert. Konsolenausgabe, wörtlich:
+
+```text
+Rechentests: alle 9 bestanden.
+Analysegruppe: 8046 von 15560 Personen.
+Geschrieben: /home/user/nhanes-pilot/results/B/abend4_fallzahlen.csv
+Geschrieben: /home/user/nhanes-pilot/data/work/abend4_personen_B.csv
+```
+
+Ein zweiter Lauf erzeugt beide Dateien Byte für Byte gleich.
+
+| Datei | SHA-256 |
+| --- | --- |
+| `results/B/abend4_fallzahlen.csv` | `280727e00b97a280d276bcb015b5bb461b960ab27889962913487c3fbc4f7908` |
+| `data/work/abend4_personen_B.csv` (nicht im Git) | `05967ffe1c6cce629bd11a81d9787818946d50750545f9e908393fd3a636e2af` |
+
+**Beobachtung:** Die Personendatei von B hat dieselbe Prüfsumme wie die von A, ist also Byte für Byte gleich, obwohl A (R) und B (Python) getrennt geschrieben sind. Die zwei Fallzahlen-Dateien unterscheiden sich laut `diff` nur im Kopf der ersten Spalte (`zeile` bei A, `wirkstoff` bei B). Das ist nach `OFFEN.md`, Frage 5, frei.
+
+### 5. `vergleich.py` erweitert
+
+**Änderung am bestehenden Teil:** Die bisherige Funktion `main()` heißt jetzt `abend3()`, ihr Inhalt ist unverändert. Das neue `main()` ruft `abend3()` und danach `abend4()` auf. Im Kopfkommentar ist Abend 4 beschrieben. Abbruch an Abend 3 verhindert den Teil für Abend 4.
+
+**Neu, Teil für Abend 4** (nur Standardbibliothek):
+
+- Zeilennamen, Spaltennamen, Spalten der Personendatei und Kategoriewerte liest das Skript aus SPEC.md, Abschnitt „Abend 4“: 7 Zeilennamen aus der Wirkstofftabelle, 4 DOAK und `GESAMT` aus dem Satz „Zusätzlich gibt es …“, 8 Spaltennamen aus der Tabelle „Ausgabe“, die drei Kategoriespalten und ihre vier Werte aus dem Satz „Drei Kategoriespalten …“. Die elf Trefferspalten sind die zwölf Zeilennamen ohne `GESAMT`. Abbruch, wenn eine dieser Stellen nicht genau so in SPEC.md steht.
+- **a) Fallzahlen** (`OFFEN.md`, Frage 5): Zuordnung der Zeilen über die zwölf Zeilennamen und der Spalten über die acht Spaltennamen. Die übrige Spalte ist die Bezeichnerspalte, ihr Name ist frei. Abbruch, wenn eine Zeile oder Spalte fehlt. Zusätzlich Abbruch, wenn eine Zeile doppelt oder unbekannt ist, wenn es nicht genau eine Bezeichnerspalte gibt oder eine Zelle keine ganze Zahl ist. Jede der 96 Zellen wird als ganze Zahl exakt verglichen. Das Ergebnis steht nur auf der Konsole.
+- **b) Person für Person** (`OFFEN.md`, Frage 8b): Zuordnung der Spalten über ihre Namen. Abbruch, wenn eine der 16 Spalten fehlt oder eine unbekannte dazukommt. Beide Dateien müssen je 15.560 verschiedene `SEQN` haben, und zwar dieselben, sonst Abbruch. Die Zeilen werden über `SEQN` zugeordnet, nicht über ihre Position. `SEQN`, `analysegruppe` und die Trefferspalten als ganze Zahlen (`1` und `1.0` sind gleich), die Kategorien als Text. Leer gegen gefüllt ist eine Abweichung. Abbruch bei jedem anderen Wert: in den Zahlenspalten alles außer leer, `0` und `1` (bei `SEQN` jede ganze Zahl, nie leer), in den Kategoriespalten alles außer leer, `u30`, `30_45`, `45_60` und `ab60`. Die erlaubten Werte stammen aus SPEC.md („Wert 1 oder 0 … leer“, „mit den Werten `u30`, `30_45`, `45_60` oder `ab60`“).
+- `results/vergleich_abend4.csv` enthält nur die Zahl der Abweichungen je Spalte: Kopf `spalte,abweichungen`, 16 Zeilen. Die Zeile `SEQN` ist 0, wenn das Skript nicht vorher abbricht, weil `SEQN` der Schlüssel der Zuordnung ist. Einzelne `SEQN` gibt das Skript weder aus noch schreibt es sie.
+
+**Vor dem ersten Lauf ergänzt:** Bei der Ausgabe der Prüfsummen steht `fehlt` statt eines Programmfehlers, wenn eine Eingabedatei fehlt.
+
+**Änderungen nach dem ersten Lauf: keine.** Erster Lauf am 24.11.2026, 06:53 UTC, SHA-256 von `vergleich.py` beim Lauf `70aa4e667a747355005628fb302552b6ef0fb413a85402617db1b3b24a3b3d48`. Ein zweiter Lauf liefert dieselbe Konsolenausgabe und dieselben Dateien.
+
+**Abend 3 unverändert:** Vor der Änderung erzeugte die alte Fassung (SHA-256 `de610c9f…0455980c`) `results/vergleich_abend2.csv` mit SHA-256 `c4a3cf964c8703151341bce5b05e7ccf466561f69c991d05d621944392cdb5df`, gleich der committeten Datei. Die erweiterte Fassung erzeugt die Datei mit derselben Prüfsumme, also Byte für Byte gleich. Auch die Konsolenausgabe des Teils für Abend 3 ist gleich der alten Fassung.
+
+**Gegenprobe**, an Kopien der Eingaben im Scratchpad der Sitzung, nicht im Repo und nicht committet. Weil die Personendateien bytegleich sind, zeigt null Abweichungen allein nicht, dass der Vergleich Abweichungen findet. In der Kopie von B wurden Werte verändert und das unveränderte `vergleich.py` darauf ausgeführt:
+
+| Veränderung in der Kopie von B | Ergebnis |
+| --- | --- |
+| eine Trefferzelle 0/1 vertauscht, eine `kat_cg` geändert, eine Trefferzelle geleert, 47 Zellen als `1.0`/`0.0` geschrieben | genau 3 Abweichungen (je 1 in `METFORMIN`, `EDOXABAN`, `kat_cg`), `1.0` zählt nicht |
+| Spalten und Zeilen der Personendatei in umgekehrter Reihenfolge | 0 Abweichungen |
+| Fallzahlen: eine Zelle +1, Zeilen umgekehrt, erste Spalte umbenannt | 95 von 96 gleich, die geänderte Zelle als einzige ungleich |
+| Zeile `GESAMT` fehlt; Spalte `n_alter_80` fehlt | Abbruch mit Meldung |
+| Wert `NA`; Kategorie `AB60`; Trefferwert `2` | Abbruch mit Meldung |
+| eine `SEQN` fehlt; eine `SEQN` ersetzt | Abbruch mit Meldung |
+
+### 6. Ergebnis
+
+SHA-256 der Eingaben beim Lauf: SPEC.md `2727ca9e15ceee64c3a8d4043f80be305bccb8d50ffdcd5f693e5ecb12d623cb`, `results/A/abend4_fallzahlen.csv` `5dbbc88421c999fd8221d7a29359fbcdf1e70ba89e2886fd8fff2a8edee79990`, die übrigen wie oben.
+
+**a) Fallzahlen: alle 96 Zellen gleich.** Konsolenausgabe von `vergleich.py`, wörtlich (je Zelle Wert von A, dann von B):
+
+```text
+a) Fallzahlen: Zeilen über die 12 Zeilennamen, Spalten über die 8 Spaltennamen
+   Zelle: A, B; '*' markiert eine ungleiche Zelle
+                             personen            ckdepi_u60           deindex_u60                cg_u60        irgendeine_u60  diskordant_cg_ckdepi diskordant_cg_deindex              alter_80
+METFORMIN                     816|816                 91|91                 59|59                 91|91               126|126                 90|90                 67|67                 58|58
+GABAPENTIN                    326|326                 70|70                 56|56                 61|61                 85|85                 57|57                 35|35                 48|48
+PREGABALIN                      49|49                 13|13                 12|12                 11|11                 16|16                 12|12                   9|9                   3|3
+DOAK_GESAMT                   129|129                 47|47                 31|31                 41|41                 57|57                 36|36                 26|26                 56|56
+ALLOPURINOL                   126|126                 59|59                 37|37                 40|40                 65|65                 47|47                 22|22                 28|28
+SITAGLIPTIN                     88|88                 19|19                 13|13                 17|17                 25|25                 20|20                 11|11                   4|4
+SPIRONOLACTONE                  81|81                 27|27                 20|20                 22|22                 32|32                 21|21                 14|14                 14|14
+APIXABAN                        70|70                 27|27                 18|18                 23|23                 33|33                 24|24                 14|14                 32|32
+RIVAROXABAN                     49|49                 18|18                 12|12                 15|15                 21|21                 10|10                   9|9                 20|20
+DABIGATRAN                      10|10                   2|2                   1|1                   3|3                   3|3                   2|2                   3|3                   4|4
+EDOXABAN                          0|0                   0|0                   0|0                   0|0                   0|0                   0|0                   0|0                   0|0
+GESAMT                      8046|8046               642|642               509|509               756|756               961|961               674|674               501|501               494|494
+Zellen verglichen: 96; gleich: 96; ungleich: 0
+```
+
+**b) Person für Person: null Abweichungen in allen 16 Spalten.** Konsolenausgabe, wörtlich:
+
+```text
+b) Person für Person: beide Dateien enthalten dieselben 15560 SEQN; Zuordnung über SEQN
+  SEQN                  0
+  analysegruppe         0
+  METFORMIN             0
+  GABAPENTIN            0
+  PREGABALIN            0
+  DOAK_GESAMT           0
+  ALLOPURINOL           0
+  SITAGLIPTIN           0
+  SPIRONOLACTONE        0
+  APIXABAN              0
+  RIVAROXABAN           0
+  DABIGATRAN            0
+  EDOXABAN              0
+  kat_ckdepi            0
+  kat_deindex           0
+  kat_cg                0
+Spalten mit Abweichung: 0 von 16; Abweichungen gesamt: 0
+
+Abend 4 nach SPEC.md (Fallzahlen identisch, null Abweichungen je Person): erfüllt
+Geschrieben: results/vergleich_abend4.csv (16 Zeilen)
+```
+
+`results/vergleich_abend4.csv`: SHA-256 `eb2127f10b02e95879abaa022afdf49dee55e27bb06e79862992c70349643b29`.
+
+**Damit ist die Bedingung „Fertig ist Abend 4“ aus SPEC.md erfüllt:** Die beiden Fallzahlen-Dateien stimmen in jeder Zelle exakt überein, und der Vergleich Person für Person zeigt null Abweichungen. Die Rechentests haben A (`A/06_rechentests.R`) und B (Ausgabe „Rechentests: alle 9 bestanden.“) bestanden.
+
+### Hinweise
+
+- Die Übereinstimmung zeigt, dass A und B die Spezifikation gleich umgesetzt haben. Fehler in der Spezifikation selbst deckt sie nicht auf (SPEC.md, Definition 6).
+- Bekannte Lücke unverändert: Die Cockcroft-Gault-Formel ist nicht am Volltext der Originalarbeit geprüft. Davon hängen `n_cg_u60`, `n_irgendeine_u60`, die zwei Diskordanz-Spalten und `kat_cg` ab. Die Prüfung wird vor der Hauptanalyse nachgeholt.
+- Die Entscheidungsregel ist nicht angewendet. Das entscheidet Justus.
+- `data/work/abend4_personen_A.csv` und `abend4_personen_B.csv` liegen laut `.gitignore` nicht im Git.
